@@ -1,7 +1,7 @@
 # Proof_of_the_Pudding_Heating
 Repository for data and code for Rigaux, Hamels and Ovaere (2024). "The Proof of the Pudding is in the Heating: a Field Experiment on Household Engagement with Heat Pump Flexibility" (*)
 
-December 2024
+December 2024 - Updated in January 2025
 
 (*) Baptiste Rigaux & Sam Hamels & Marten Ovaere, 2024. "The Proof of the Pudding is in the Heating: A Field Experiment on Household Engagement with Heat Pump Flexibility," Working Papers of Faculty of Economics and Business Administration, Ghent University, Belgium 24/1101, Ghent University, Faculty of Economics and Business Administration. Accessible at: https://ideas.repec.org/p/rug/rugwps/24-1101.html 
 
