@@ -28,7 +28,7 @@ Contact: baptiste.rigaux@ugent.be
 1. Download the (GitHub) archive.
 2. Extract it and extract the ZIP files 'experiment_data.zip' and 'synop_data.zip' in the archive.
 3. Relocate the extracted files 'experiment_data.dta' and 'synop_data.csv' in the main directory. 
-4. Open the Stata_code.do file, change the directory and compile the programs (lines 12-18 first and 54-2897 second).
+4. Open the Stata_code.do file, change the directory and compile the programs (lines 13-20 first and 54-2802 second).
 5. Run each program separately, or alternatively compile and use the 'run_all' program to reproduce the whole paper in one command.
 6. Optional: run the Building_dataset_monetary_valuation_flex_event.py file after the program 'F7_flex_event_temp' and before the program 'F8_both_panels' to build the dataset 'money_shifted_heterogeneous.csv' used in 'F8_both_panels' (already included in the archive for convenience).
 
