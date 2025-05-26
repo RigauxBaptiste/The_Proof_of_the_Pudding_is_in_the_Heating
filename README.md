@@ -1,10 +1,7 @@
-# The_Proof_of_the_Pudding_is_in_the_Heating
+# Proof_of_the_Pudding_Heating
+Repository for data and code for Rigaux, B., Hamels, S., & Ovaere, M. (2025). The proof of the pudding is in the heating: A field experiment on household engagement with heat pump flexibility. Energy Economics, 108, 108565. https://doi.org/10.1016/j.eneco.2025.108565 
 
-Repository for data and code for Rigaux, Hamels and Ovaere (2024). "The Proof of the Pudding is in the Heating: a Field Experiment on Household Engagement with Heat Pump Flexibility" (*)
-
-December 2024 - Updated in January 2025
-
-(*) Baptiste Rigaux & Sam Hamels & Marten Ovaere, 2024. "The Proof of the Pudding is in the Heating: A Field Experiment on Household Engagement with Heat Pump Flexibility," Working Papers of Faculty of Economics and Business Administration, Ghent University, Belgium 24/1101, Ghent University, Faculty of Economics and Business Administration. Accessible at: https://ideas.repec.org/p/rug/rugwps/24-1101.html 
+Accepted version available at: https://ideas.repec.org/p/rug/rugwps/24-1101.html 
 
 Contact: baptiste.rigaux@ugent.be
 
@@ -29,9 +26,9 @@ Contact: baptiste.rigaux@ugent.be
 1. Download the (GitHub) archive.
 2. Extract it and extract the ZIP files 'experiment_data.zip' and 'synop_data.zip' in the archive.
 3. Relocate the extracted files 'experiment_data.dta' and 'synop_data.csv' in the main directory. 
-4. Open the Stata_code.do file, change the directory and compile the programs (lines 13-20 first and 54-2802 second).
+4. Open the Stata_code.do file, change the directory and compile the programs (lines 12-18 first and 54-2897 second).
 5. Run each program separately, or alternatively compile and use the 'run_all' program to reproduce the whole paper in one command.
-6. Optional: run the Building_dataset_monetary_valuation_flex_event.py file after the program 'F7_flex_event_temp' and before the program 'F8_both_panels' to build the dataset 'money_shifted_heterogeneous.csv' used in 'F8_both_panels' (already included in the archive for convenience).
+6. Optional: run the Building_dataset_monetary_valuation_flex_event.py file after the program 'Fig_6_event_temp' and before the program 'Fig_7_both_panels' to build the dataset 'money_shifted_heterogeneous.csv' used in 'Fig_7_both_panels' (already included in the archive for convenience).
 
 ## Subject eligibility and selection: 
 

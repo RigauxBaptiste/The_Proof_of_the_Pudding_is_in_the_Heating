@@ -1,10 +1,13 @@
 ********************************************************************************
 *               The Proof of the Pudding is in the Heating:                    *
 *    a Field Experiment on Household Engagement with Heat Pump Flexibility     *
-*                      December 2024 - Updated January 2025    				   *
+*                                May 2025                    	         	   *
 *            Baptiste Rigaux°, Sam Hamels° and Marten Ovaere°                  *
 *         ° Department of Economics, Ghent University (Belgium)                *
+*                  Energy Economics, doi: 10.1016/j.eneco.2025.108565          *
 ********************************************************************************
+
+// Contact: baptiste.rigaux@ugent.be
 
 * Stata version 18.0
 
@@ -20,45 +23,66 @@ set more off
 cd "C:\Users\" // Change this with your directory
 
 * This .do file runs each of the results for the paper. To see the results of just one part, select it in the list below and run it.
-* Note that the program 'experiment_data_preparation' is necessary for all other programs below it. 
 * The code is structured around Tables and Figures but also presents the commands used to interpret the results in the text (e.g. t-tests).
+* In addition to outputting the figures, most of these programs also output relevant quantitites  (discussed in the text alongside the figures) directly in the console. 
 
-program define run_all
+program define run_all 
+
 // Section 2:
-T1_participants_characteristics // Table 1
-Data_experiment_data_preparation // Data preparation (prerequisite for other Tables/Figures) - output: data_prepared.dta
+Table_1_characteristics // Table 1 - output: Table_1_top.tex, Table_1_middle.tex, Table_1_bottom.tex + console outputs
+
 // Section 4:
-T2_data_duration_reason_stops // (Data for) Table 2
-F1_histogram_duration // Figure 1
-T3_regression_duration // Table 3
-F2_pow_temp_profiles // Figure 2 (both panels)
-F3_histogram_kWh_saved // Figure 3
-F4_rebound_post_inter // Figure 4 (both panels)
-F5_6_pow_cons_during_event // Figure 5 (both panels) and Figure 6
-F7_flex_event_temp // Figure 7 (all panels) and Figure 8 
-F8_both_panels // Figure 8 (both panels) ; using the dataset outputted by the Python code (but already included in the archive for convenience)
-F9_hist_temp_drop // Figure 9
-Study_manual_overrules // Comment in the text: timing of manual overrules + evidence of fewer manual overrules later in the heating season
+data_preparation 				// Data preparation (prerequisite for other Tables/Figures) ; Output: "data_prepared.dta"
+Table_2_duration_reason_stops   // Console outputs for Table 2  
+Fig_1_hist_duration 			// "Fig_1.pdf"
+Table_3_reg_duration 			// Console outputs for Table 3 
+ATT_temperature_eq_7 			// Console output: ATT indoor temperature reduction during interventions
+ATT_power_eq_8 					// Console output: ATT powder reduction during interventions
+Fig_2_pow_temp_profiles 		// "Fig_2_left.pdf" and "Fig_2_right.pdf" 
+Fig_3_hist_kWh_reduction 		// "Fig_3.pdf" + console outputs
+Fig_4_rebound_post_inter 		// "Fig_4_left.pdf" and "Fig_4_right.pdf" + console outputs
+Fig_5_A15_pow_cons_during_event // "Fig_5_left.pdf", "Fig_5_right.pdf" and "Fig_A15.pdf"
+Fig_6_event_temp 				// "Fig_6.pdf", "Fig_A16_top_left.pdf", "Fig_A16_top_right.pdf", "Fig_A16_bottom_left.pdf", "Fig_A16_bottom_right.pdf", "Fig_A17_top_left.pdf", "Fig_A17_top_right.pdf", "Fig_A17_bottom_left.pdf", "Fig_A17_bottom_right.pdf"
+Fig_7_both_panels 			    // "Fig_7_left.pdf" and "Fig_7_right.pdf" ; using the dataset outputted by Python code (already incl. in the archive for convenience) + console outputs
+Fig_8_both_panels 			   // "Fig_8_right_legend_non_edited.gph", "Fig_8_right_legend_non_edited.pdf", "Fig_8_left_legend_non_edited.gph", "Fig_8_left_legend_non_edited.pdf", "Fig_A18.pdf" + console outputs
+overrules_temperatures          // Statements in the text of section 4.3.1 about indoor temperature at overrule and comparison with presurvey stated preferences
+F9_hist_temp_drop              // "Fig_9.pdf" + console outputs
+postexperiment_survey          // Console outputs for Sect. 4.3.3
+
 // Appendices: 
-App_F10_hist_pow_temp 
-App_F11_pow
-App_F12_pow_profile_temp
-App_F13_share_of_HPs
-App_T4_HS_temp
-App_T5_sample_composition
-App_F16_random_inter 
-App_T6_reg_rebound_kWh
+App_A1_Table_A4
+App_A2_Table_A5
+App_A3_Fig_A10
+App_A4_Fig_A11
+App_A5_Fig_A12
+App_A6_Fig_A13
+App_A7_Fig_A14
+App_C_Fig_C19
+App_D_Table_D6
+App_F_Fig_F20
+App_F_Table_F8
+App_G_Table_G9
+App_H_Table_H10 
 end
 
 // run_all // uncomment this line to run the whole program 
 
 ********************************************************************************
-* Table 1: Participants' characteristics									   *
+********************************************************************************
+**                                                                            **
+**                   SECTION 2: Experimental setting and data                 **
+**              														      **
+********************************************************************************
 ********************************************************************************
 
-program define T1_participants_characteristics
+********************************************************************************
+* Table 1: Participants' characteristics									   *
+********************************************************************************
+capture program drop Table_1_characteristics
+program define Table_1_characteristics
 // This programs returns as an output three .tex files for each panel of Table 1:
-// Table1_1.tex, Table1_2.tex, Table1_3.tex
+// Table_1_top.tex, Table_1_middle.tex, Table_1_bottom.tex
+// As well as the few coefficients of variation mentioned in the text 
 
 use presurvey_data, clear
 
@@ -144,7 +168,7 @@ use presurvey_data, clear
     
     *
 
-    file open latex_table using "Table1_1.tex", write text replace
+    file open latex_table using "Table_1_top.tex", write text replace
 
     *
 
@@ -299,7 +323,7 @@ use presurvey_data, clear
 
     *
 
-    file open latex_table using "Table1_2.tex", write text replace
+    file open latex_table using "Table_1_middle.tex", write text replace
 
     *
 
@@ -534,7 +558,7 @@ use presurvey_data, clear
 
     *
 
-    file open latex_table using "Table1_3.tex", write text replace
+    file open latex_table using "Table_1_bottom.tex", write text replace
 
     *
 
@@ -554,19 +578,62 @@ use presurvey_data, clear
     file write latex_table "\label{tab:behavioral_metrics}" _n
     file write latex_table "\end{table}" _n
     file close latex_table
-	
+		
+// Code for heterogeneity analysis in the text 
+
+qui sum total_number_hh if !missing(total_number_hh)
+local total_number_hh_avg = r(mean)
+local total_number_hh_sd = r(sd)
+
+qui sum number_kids_l6yo if !missing(number_kids_l6yo)
+local number_kids_l6yo_avg = r(mean)
+local number_kids_l6yo_sd = r(sd)
+
+sum knowledge_metric if respondent_flag_knowledge == 1
+local CV_knowledge = `r(sd)'/`r(mean)'
+
+qui sum habit_metric if respondent_flag_habit == 1
+local CV_habit = `r(sd)'/`r(mean)'
+
+qui sum proenvi_metric if respondent_flag_proenvi == 1
+local CV_proenvi = `r(sd)'/`r(mean)'
+
+di "SD household size = " `total_number_hh_sd'
+di "CV household size = " `total_number_hh_sd'/`total_number_hh_avg'
+
+di "SD number of kids < 6 y.o. = " `number_kids_l6yo_sd'
+di "CV number of kids < 6 y.o. = " `number_kids_l6yo_sd'/`number_kids_l6yo_avg'
+
+di "CV understanding of flexibility-related concepts = " `CV_knowledge'
+di "CV pro-environmental behavior = " `CV_proenvi'
+di "CV energy-saving habits = " `CV_habit'
 end
 	
 ********************************************************************************
+********************************************************************************
+**                                                                            **
+**                             SECTION 4: Results                             **
+**              														      **
+********************************************************************************
+********************************************************************************	
+
+********************************************************************************
 * Experiment data preparation            									   *
 ********************************************************************************
+capture program drop code_for_preparation
+program define code_for_preparation
+// Code for data preparation
 
-program define Data_experiment_data_preparation
-// This programs prepares the dataset from the field experiment.
-// Necessary to run the rest of the program.
-// Output: data_prepared.dta
+    args minus_hours plus_hours excl_before_mins excl_after_mins max_after_end first_phase_event
 
-use experiment_data, clear
+    // Convert inputs into locals
+	local window_elapsed_minus_hours `minus_hours'
+    local window_elapsed_plus_hours `plus_hours'
+    local exclude_from_CF_before_minutes `excl_before_mins'
+    local exclude_from_CF_after_minutes `excl_after_mins'
+    local max_time_after_int_end `max_after_end'
+    local window_first_phase_event = `first_phase_event' * 60 * 60 * 1000 // in ms
+
 
 // Additional time variables 
 
@@ -574,10 +641,6 @@ use experiment_data, clear
     capture drop five_min_level_int
     gen five_min_level_int = int(hourofday * 12 + minofhour / 5)
     // Variable 'window_unique_index' that starts 6h before an intervention and ends 48h after (useful for plotting and excluding some observations for the counterfactual)
-    local window_elapsed_minus_hours 6
-    local window_elapsed_plus_hours 48
-    local exclude_from_CF_before_minutes 20
-    local exclude_from_CF_after_minutes 16*60 // 16 hours
 
             // Sort by panel and time (main order)
             sort hh_id time
@@ -651,7 +714,6 @@ use experiment_data, clear
             drop temp_index
 
     // Variable that identifies the time after an intervention stop 
-    local max_time_after_int_end 16.1*60 // 16.1 hours : in practice we won't look further than 16 hours. But the .1 allows for extra observations at time_diff_from_end_5min == 960 after rounding up. 
 
             // Sort by panel and time (main order)
             sort hh_id time
@@ -723,6 +785,14 @@ use experiment_data, clear
 	
 // Additional temperature variables 
 
+	// Daily average - min - max - outdoor temperature 
+	capture drop daily_avg_t_out
+	capture drop daily_min_t_out
+	capture drop daily_max_t_out
+	egen daily_avg_t_out = mean(t_out), by(hh_id date)
+	egen daily_min_t_out = min(t_out), by(hh_id date)
+	egen daily_max_t_out = max(t_out), by(hh_id date)
+
     // Average temperature during an intervention
     capture drop avg_temp_during_int
     egen avg_temp_during_int = mean(t_out), by(hh_id unique_index) 
@@ -734,7 +804,6 @@ use experiment_data, clear
     egen monthly_avg_hs = mean(daily_avg_t_out), by(monthofyear hs_index)
 
     // Identify the average temperature within 18 hours after an intervention is initiated
-    local window_first_phase_event 18*60*60*1000 // 18 hours
 
         sort hh_id time
         capture drop avg_temp_within_18h
@@ -768,13 +837,23 @@ use experiment_data, clear
             }
         }
 
+		
+// Categories of outdoor temperature for counterfactuals
+
+gen temp_cf_bin = . 
+
+replace temp_cf_bin = 1 if daily_avg_t_out <= 3 
+replace temp_cf_bin = 2 if daily_avg_t_out > 3 & daily_avg_t_out <= 6 
+replace temp_cf_bin = 3 if daily_avg_t_out > 6 & daily_avg_t_out <= 9 
+replace temp_cf_bin = 4 if daily_avg_t_out > 9 
+
 // Counterfactual HP power
 capture drop avg_cf_hp_p_spec
 capture drop sem_cf_hp_p_spec
 
     // Calculating the counterfactual power (specific to each HP and time of day, excluding observations that are too close to the start/end of an intervention)
     preserve
-        collapse (mean) avg_cf_hp_p_spec = hp_p (semean) sem_cf_hp_p_spec = hp_p, by(hh_id five_min_level_int intervention_dummy excl_from_cf)
+        collapse (mean) avg_cf_hp_p_spec = hp_p (semean) sem_cf_hp_p_spec = hp_p, by(hh_id five_min_level_int temp_cf_bin intervention_dummy excl_from_cf)
 
         drop if intervention_dummy == 1
         drop if excl_from_cf == 1 & intervention_dummy == 0
@@ -787,10 +866,12 @@ capture drop sem_cf_hp_p_spec
     restore
 
     // Matching the counterfactual with the original dataset 
-    merge m:1 hh_id five_min_level_int using `counterfactuals'
+    merge m:1 hh_id five_min_level_int temp_cf_bin using `counterfactuals'
     drop _merge
 		
 sort hh_id time
+
+sleep 10000
 save data_prepared, replace
 
 
@@ -800,7 +881,7 @@ capture drop sem_cf_t_in_spec
 
     // Calculating the counterfactual power (specific to each HP and time of day, excluding observations that are too close to the start/end of an intervention)
     preserve
-        collapse (mean) avg_cf_t_in_spec = t_in (semean) sem_cf_t_in_spec = t_in, by(hh_id five_min_level_int intervention_dummy excl_from_cf)
+        collapse (mean) avg_cf_t_in_spec = t_in (semean) sem_cf_t_in_spec = t_in, by(hh_id five_min_level_int temp_cf_bin intervention_dummy excl_from_cf)
 
         drop if intervention_dummy == 1
         drop if excl_from_cf == 1 & intervention_dummy == 0
@@ -813,20 +894,33 @@ capture drop sem_cf_t_in_spec
     restore
 
     // Matching the counterfactual with the original dataset 
-    merge m:1 hh_id five_min_level_int using `counterfactuals'
+    merge m:1 hh_id five_min_level_int temp_cf_bin using `counterfactuals'
     drop _merge
     
 sort hh_id time
 
+sleep 10000
 save data_prepared, replace
+
+end
+
+capture program drop data_preparation
+program define data_preparation
+// This programs prepares the dataset from the field experiment.
+// Necessary to run the rest of the program.
+// Output: data_prepared.dta
+
+use experiment_data, clear
+
+code_for_preparation 6 48 20 960 1056 18 // 1056 is a 10% increase over 960 mins (= 16 hours). This extra margin is needed to stabilize the lpoly smoothing at the x-axis boundary. But we don't plot further than 16 hours.  
 
 end
 
 ********************************************************************************
 * Table 2: Duration of interventions and stopping scenarios					   *
 ********************************************************************************
-
-program define T2_data_duration_reason_stops
+capture program drop Table_2_duration_reason_stops
+program define Table_2_duration_reason_stops
 // This programs computes the quantities that enter Table 2.
 
 use data_prepared, clear
@@ -901,8 +995,8 @@ end
 ********************************************************************************
 * Figure 1: Histogram of duration 											   *
 ********************************************************************************
-
-program define F1_histogram_duration
+capture program drop Fig_1_hist_duration
+program define Fig_1_hist_duration
 // This programs plots Figure 1.
 
 use data_prepared, clear
@@ -920,17 +1014,17 @@ local avg_duration_int = r(mean)
 // Fig. 1: Histogram of the total duration of all interventions in bins of 1h. 
 
 twoway hist total_duration_int_hour if reason_stop != 0 & total_duration_int_hour < 50, aspectratio(1) width(1) xtitle("Intervention duration (h)") density color(blue%35) xline(`avg_duration_int', lcolor(edkblue) lwidth(1.5 pt)) //////
-    graphregion(color(white) margin(zero))  xsize(5) ysize(5)  
-
-graph export "Figure1.pdf", replace
+    graphregion(color(white) margin(zero))  xsize(8) ysize(8)  
+	
+graph export "Fig_1.pdf", replace width(8) height(8) 
 
 end
 
 ********************************************************************************
 * Table 3: Regression of intervention duration								   *
 ********************************************************************************
-
-program define T3_regression_duration 
+capture program drop Table_3_reg_duration
+program define Table_3_reg_duration 
 // This program estimates the regressions in Table 3. 
 
 use data_prepared, clear
@@ -947,7 +1041,16 @@ gen constant = 1
 gen t_dhw_0_notdec_geq_40 = t_dhw_0 * (1 - decoupled) * (t_dhw_0 >= 40)
 gen t_dhw_0_dec = t_dhw_0 * decoupled
 
+// Adding the difference between max and min daily temperatures 
+
+capture drop delta_daily_temp
+
+gen delta_daily_temp = daily_max_t_out - daily_min_t_out
+
 // Text:
+
+pwcorr delta_daily_temp daily_max_t_out, sig star(0.05)
+pwcorr delta_daily_temp daily_min_t_out, sig star(0.05)
 
 ci means t_dhw_0_notdec_geq_40 if reason_stop != 0 & t_dhw_0_notdec_geq_40 != 0
 ci means t_dhw_0_dec if reason_stop != 0 & t_dhw_0_dec != 0
@@ -958,13 +1061,13 @@ ci means t_dhw_0_dec if reason_stop != 0 & t_dhw_0_dec != 0
 
         // Model 1
 
-        wildbootstrap reg total_duration_int_hour t_in_0 min_t_out_5h t_dhw_0_dec t_dhw_0_notdec_geq_40 constant if reason_stop != 0, hascons cluster(hh_id) rseed(42) reps(100000)
+        wildbootstrap reg total_duration_int_hour t_in_0 min_t_out_5h delta_daily_temp t_dhw_0_dec t_dhw_0_notdec_geq_40 constant if reason_stop != 0, hascons cluster(hh_id) rseed(42) reps(100000)
         estimates store Model_1_d
         matrix list r(table)
 
         // Model 2
 
-        wildbootstrap reg total_duration_int_hour i.notif_0 t_in_0 min_t_out_5h t_dhw_0_dec t_dhw_0_notdec_geq_40 constant if reason_stop != 0, hascons cluster(hh_id) rseed(42) reps(100000)
+        wildbootstrap reg total_duration_int_hour i.notif_0 t_in_0 delta_daily_temp min_t_out_5h t_dhw_0_dec t_dhw_0_notdec_geq_40 constant if reason_stop != 0, hascons cluster(hh_id) rseed(42) reps(100000)
         estimates store Model_2_d
         matrix list r(table)
 
@@ -972,13 +1075,13 @@ ci means t_dhw_0_dec if reason_stop != 0 & t_dhw_0_dec != 0
 
         // Model 3
 
-        wildbootstrap reg total_duration_int_hour i.notif_0 t_in_0 min_t_out_5h t_dhw_0 i.hh_id if reason_stop != 0, cluster(hh_id) rseed(42) reps(100000)
+        wildbootstrap reg total_duration_int_hour i.notif_0 t_in_0 min_t_out_5h delta_daily_temp t_dhw_0 i.hh_id if reason_stop != 0, cluster(hh_id) rseed(42) reps(100000)
         estimates store Model_3_d
         matrix list r(table)
 
         // Model 4
 
-        wildbootstrap reg total_duration_int_hour i.notif_0 t_in_0 min_t_out_5h t_dhw_0 ib(14).hourofday_0 i.hh_id if reason_stop != 0, cluster(hh_id) rseed(42) reps(100000)
+        wildbootstrap reg total_duration_int_hour i.notif_0 t_in_0 min_t_out_5h delta_daily_temp t_dhw_0 ib(14).hourofday_0 i.hh_id if reason_stop != 0, cluster(hh_id) rseed(42) reps(100000)
         estimates store Model_4_d
         matrix list r(table)
 
@@ -994,8 +1097,32 @@ end
 ********************************************************************************
 * Figure 2: Power and temperature profiles during/outside interventions        *
 ********************************************************************************
+capture program drop ATT_temperature_eq_7 
+program define ATT_temperature_eq_7
+// This program reports the ATT on indoor temperature from eq. 7
 
-program define F2_pow_temp_profiles
+use data_prepared, clear
+sort hh_id time
+
+ttest t_in, by(intervention_dummy) une
+wildbootstrap reg t_in intervention_dummy i.hh_id, cluster(hh_id) rseed(42) reps(100000) // Household-fixed effects
+	
+end
+
+capture program drop ATT_power_eq_8
+program define ATT_power_eq_8
+// This program reports the ATT on HP power from eq. 8
+
+use data_prepared, clear
+sort hh_id time
+
+ttest hp_p if !(excl_from_cf == 1 & intervention_dummy == 0), by(intervention_dummy) une
+wildbootstrap reg hp_p intervention_dummy i.hh_id, cluster(hh_id) rseed(42) reps(100000) // Household-fixed effects
+
+end
+
+capture program drop Fig_2_pow_temp_profiles
+program define Fig_2_pow_temp_profiles
 // This program plots the indoor temperature and heat pump power profiles in Fig 2.
 // Both panels.
 
@@ -1003,11 +1130,6 @@ use data_prepared, clear
 sort hh_id time
 
 * Indoor temperature
-
-	// Quantitative effect of an intervention on indoor temperature
-
-	ttest t_in, by(intervention_dummy) une
-	wildbootstrap reg t_in intervention_dummy i.hh_id, cluster(hh_id) rseed(42) reps(100000) // Household-fixed effects
 
 	preserve
 
@@ -1053,17 +1175,12 @@ sort hh_id time
 				ylabel(19.8(0.2)21) ytitle("Average indoor temperature" "across the sample  (°C)") ///
 				legend(order(1 "Non-intervention" 2 "95% CI" 3 "Intervention" 4 "95% CI") cols(2) pos(6) size(medsmall))  graphregion(color(white) margin(zero))  xsize(8) ysize(8) 
 
-			graph export "Figure2_left.pdf", width(8) height(8) replace
+			graph export "Fig_2_left.pdf", width(8) height(8) replace
 
 	restore
 
 * Heat pump power
 		
-	// Quantitative effect of an intervention on HP power
-
-	ttest hp_p, by(intervention_dummy) une
-	wildbootstrap reg hp_p intervention_dummy i.hh_id, cluster(hh_id) rseed(42) reps(100000) // Household-fixed effects
-
 	// Plot Fig. 2
 	
 	preserve
@@ -1113,22 +1230,21 @@ sort hh_id time
 				ylabel(0(100)600) ytitle("Average HP power consumption" "across non-decoupled HPs (W)") ///
 				legend(order(1 "Non-intervention" 2 "95% CI" 3 "Intervention" 4 "95% CI") cols(2) pos(6) size(medsmall))  graphregion(color(white) margin(zero))  xsize(8) ysize(8) 
 
-			graph export "Figure2_right.pdf", replace
+			graph export "Fig_2_right.pdf", width(8) height(8) replace
 
 	restore
+	
+// Text: 
+
+pwcorr hp_p t_out, sig star(.05)	
 	
 end
 
 ********************************************************************************
 * Figure 3: Histogram of consumption saved during interventions (kWh)          *
 ********************************************************************************
-
-program define F3_histogram_kWh_saved
-// This program plots the histogram of Fig. 3
-
-use data_prepared, clear
-sort hh_id time
-
+capture program drop calculation_for_Fig_3
+program define calculation_for_Fig_3
 // Calculating the counterfactual energy consumption during interventions
 
     // Initiating variables
@@ -1167,6 +1283,17 @@ sort hh_id time
     }
 
     replace energy_saved_int = cf_energy_consumed_during_int_s - energy_consumed_during_int 
+
+end
+
+capture program drop Fig_3_hist_kWh_reduction
+program define Fig_3_hist_kWh_reduction
+// This program plots the histogram of Fig. 3
+	
+use data_prepared, clear
+sort hh_id time
+
+calculation_for_Fig_3	
 	
 // Analysis of the energy consumption saved during the intervention
 
@@ -1181,21 +1308,15 @@ local avg_energy_shift_spec = r(mean)
 twoway hist energy_saved_int if reason_stop != 0 & energy_saved_int < 15, width(0.5) aspectratio(1) xtitle("Average electricity consumption reduction (kWh)" "during interventions") xlabel(0(2.5)15) color(blue%35) ///
 	 graphregion(color(white) margin(zero))  xsize(5) ysize(5) xline(`avg_energy_shift_spec', lcolor(edkblue) lwidth(1.5 pt)) 
 
-graph export "Figure3.pdf", replace
+graph export "Fig_3.pdf", width(8) height(8) replace
 
 end
 
 ********************************************************************************
 * Figure 4: Rebound power (W) and consumption (kWh) after interventions        *
 ********************************************************************************
-
-program define F4_rebound_post_inter
-// This program plots both panels of Fig. 4
-// Standard errors are derived from the variability of the mean quantity at each bin for time after intervention stop (at the 5 min-level); i.e. does not fully account for the autocorrelation structure in the errors, nor the intra-household variability. 
-
-use data_prepared, clear
-sort hh_id time
-
+capture program drop calculation_for_Fig_4
+program define calculation_for_Fig_4
 // Calculating the counterfactual energy and power consumption within 16h after interventions
 
     // Initiating variables
@@ -1240,10 +1361,70 @@ sort hh_id time
     replace energy_rebound_after_int = energy_consumed_after_int - cf_energy_consumed_after_int_s // Rebound electricity consumption in kWh
     replace power_rebound_after_int = hp_p - cf_hp_p_filling_after_spec // Rebound power in W
 
-    // Generating a variable to capture the full rebound electricity consumption (kWh), at 16h after the intervention stop
-    capture drop energy_rebound_after_int_16h
-    gen energy_rebound_after_int_16h = energy_rebound_after_int if time_diff_from_end_5min == 960 // 16h in minutes
-	
+end
+
+capture program drop preparation_plot_Fig_4_left
+program define preparation_plot_Fig_4_left
+
+    // Collapse of the rebound consumption on time_after_int_end_5min
+    collapse (mean) power_rebound_after_int (semean) sem_power_rebound = power_rebound_after_int, by(time_diff_from_end_5min) 
+    sort time_diff_from_end_5min
+
+    // Generate the 95% CI
+    capture drop ul
+    capture drop ll 
+
+    gen ul = power_rebound_after_int + 1.96 * sem_power_rebound
+    gen ll = power_rebound_after_int - 1.96 * sem_power_rebound
+
+    // Smoothing of the UL and LL
+
+        capture drop ul_power_rebound_smooth
+        capture drop ll_power_rebound_smooth
+
+        lpoly ul time_diff_from_end_5min, degree(0) gen(ul_power_rebound_smooth) at(time_diff_from_end_5min)
+        lpoly ll time_diff_from_end_5min, degree(0) gen(ll_power_rebound_smooth) at(time_diff_from_end_5min)
+		
+end
+
+capture program drop preparation_plot_Fig_4_right
+program define preparation_plot_Fig_4_right
+
+    // Collapse of the rebound consumption on time_after_int_end_5min
+    collapse (mean) energy_rebound_after_int (semean) sem_energy_rebound = energy_rebound_after_int, by(time_diff_from_end_5min) 
+    sort time_diff_from_end_5min
+
+    // Generate the 95% CI
+    capture drop ul
+    capture drop ll 
+
+    gen ul = energy_rebound_after_int + 1.96 * sem_energy_rebound
+    gen ll = energy_rebound_after_int - 1.96 * sem_energy_rebound
+
+    // Smoothing of the UL and LL 
+
+        capture drop ul_energy_rebound_smooth
+        capture drop ll_energy_rebound_smooth
+
+        lpoly ul time_diff_from_end_5min, degree(0) gen(ul_energy_rebound_smooth) at(time_diff_from_end_5min)
+        lpoly ll time_diff_from_end_5min, degree(0) gen(ll_energy_rebound_smooth) at(time_diff_from_end_5min)
+
+end
+
+capture program drop Fig_4_rebound_post_inter
+program define Fig_4_rebound_post_inter
+// This program plots both panels of Fig. 4
+// Standard errors are derived from the variability of the mean quantity at each bin for time after intervention stop (at the 5 min-level); i.e. does not fully account for the autocorrelation structure in the errors, nor the intra-household variability. 
+
+use data_prepared, clear
+sort hh_id time
+
+calculation_for_Fig_4
+
+// Generating a variable to capture the full rebound electricity consumption (kWh), at 16h after the intervention stop
+capture drop energy_rebound_after_int_16h
+gen energy_rebound_after_int_16h = energy_rebound_after_int if time_diff_from_end_5min == 960 // 16h in minutes
+
 // Quantification of the rebound energy consumption (kWh)
 
 di "***** Rebound energy consumption (in kWh, right panel):"
@@ -1270,24 +1451,7 @@ ci means power_rebound_after_int if time_diff_from_end_5min <= 960 // 16 hours
 
 preserve
 
-    // Collapse of the rebound consumption on time_after_int_end_5min
-    collapse (mean) energy_rebound_after_int (semean) sem_energy_rebound = energy_rebound_after_int, by(time_diff_from_end_5min) 
-    sort time_diff_from_end_5min
-
-    // Generate the 95% CI
-    capture drop ul
-    capture drop ll 
-
-    gen ul = energy_rebound_after_int + 1.96 * sem_energy_rebound
-    gen ll = energy_rebound_after_int - 1.96 * sem_energy_rebound
-
-    // Smoothing of the UL and LL 
-
-        capture drop ul_energy_rebound_smooth
-        capture drop ll_energy_rebound_smooth
-
-        lpoly ul time_diff_from_end_5min, degree(0) gen(ul_energy_rebound_smooth) at(time_diff_from_end_5min)
-        lpoly ll time_diff_from_end_5min, degree(0) gen(ll_energy_rebound_smooth) at(time_diff_from_end_5min)
+preparation_plot_Fig_4_right
     
     // Plot Fig. 4 - right
 
@@ -1297,7 +1461,7 @@ preserve
         xtitle("Time to intervention stop (h)") xlabel(0 "0" 120 "2" 240 "4" 360 "6" 480 "8" 600 "10" 720 "12" 840 "14" 960 "16") ///
         legend(order(1 "Average (across interventions)" 2 "95% CI") cols(2) pos(6) size(small)) graphregion(color(white) margin(zero))  xsize(8) ysize(8)  
 
-    graph export "Figure4_right.pdf", width(8) height(8) replace
+    graph export "Fig_4_right.pdf", width(8) height(8) replace
 
 restore
 
@@ -1305,25 +1469,8 @@ restore
 
 preserve
 
-    // Collapse of the rebound consumption on time_after_int_end_5min
-    collapse (mean) power_rebound_after_int (semean) sem_power_rebound = power_rebound_after_int, by(time_diff_from_end_5min) 
-    sort time_diff_from_end_5min
+preparation_plot_Fig_4_left
 
-    // Generate the 95% CI
-    capture drop ul
-    capture drop ll 
-
-    gen ul = power_rebound_after_int + 1.96 * sem_power_rebound
-    gen ll = power_rebound_after_int - 1.96 * sem_power_rebound
-
-    // Smoothing of the UL and LL
-
-        capture drop ul_power_rebound_smooth
-        capture drop ll_power_rebound_smooth
-
-        lpoly ul time_diff_from_end_5min, degree(0) gen(ul_power_rebound_smooth) at(time_diff_from_end_5min)
-        lpoly ll time_diff_from_end_5min, degree(0) gen(ll_power_rebound_smooth) at(time_diff_from_end_5min)
-    
     // Plot Fig. 4 - left
 
     twoway lpoly power_rebound_after_int time_diff_from_end_5min if time_diff_from_end_5min <= 960, clcolor(orange) degree(0) ///
@@ -1332,26 +1479,23 @@ preserve
         ylabel(-100(100)900) ytitle("Average post-intervention" "power consumption increase (W)") yline(0) ///
         legend(order(1 "Average (across interventions)" 2 "95% CI") cols(2) pos(6) size(small)) graphregion(color(white) margin(zero))  xsize(8) ysize(8)  
 
-graph export "Figure4_left.pdf", replace
+graph export "Fig_4_left.pdf", width(8) height(8) replace
 
 restore
 
 end
 
 ********************************************************************************
-* Figures 5 and 6: Power profile (Fig. 5 left),                                *
+* Figures 5 and A.15: Power profile (Fig. 5 left),                             *
 *				   Net power reduction (Fig. 5 right),                         *
-*                  Net consumption reduction (Fig. 6);                         *
+*                  Net consumption reduction (Fig. A.15);                      *
 * after a flexibility event is initiated                                       *
 ********************************************************************************
-
-program define F5_6_pow_cons_during_event
-// This program plots both panels of Fig. 5 and Fig. 6
+capture program drop calculation_for_Fig_5_left
+program define calculation_for_Fig_5_left
 
 use data_prepared, clear
 sort hh_id time
-
-preserve
 
     // Collapse of the observed and HP-specific counterfactual power consumption on five_min_level_elapsed (5 min of intervention)
     collapse (mean) hp_p (semean) sem_hp_p = hp_p (mean) avg_cf_hp_p_spec_fleet = avg_cf_hp_p_spec (semean) se_cf_hp_p_spec_fleet = avg_cf_hp_p_spec, by(five_min_level_elapsed before after)
@@ -1367,14 +1511,16 @@ preserve
    
     gen ul_cf = avg_cf_hp_p_spec_fleet + 1.96 * se_cf_hp_p_spec_fleet
     gen ll_cf = avg_cf_hp_p_spec_fleet - 1.96 * se_cf_hp_p_spec_fleet
-
-    // Calculate optimal BW for average intervention curve (hp_p)
+		
+	// Calculate optimal BW for average intervention curve (hp_p)
     lpoly hp_p five_min_level_elapsed if (before == 1 | after == 1), degree(0)
     local bw_hp_p = r(bwidth)
+	scalar bw_hp_p_scalar = `bw_hp_p' // Needed for later 
 
     // Calculate the optimal BW for average control curve (cf_avg_bin_spec)
     lpoly avg_cf_hp_p_spec_fleet five_min_level_elapsed if (before == 1 | after == 1), degree(0)
     local bw_cf = r(bwidth)
+	scalar bw_cf_scalar = `bw_cf' // Needed for later 
 
     // Smooth the CIs for the control curve using the BW calculated above
     capture drop UL_cf_sm 
@@ -1383,7 +1529,6 @@ preserve
 
     gen at_values = . 
     replace at_values = five_min_level_elapsed if (before == 1 | after == 1) 
-
         // UL
         lpoly ul_cf five_min_level_elapsed if !missing(at_values), at(at_values) gen(UL_cf_sm) degree(0) bw(`bw_cf')
 
@@ -1391,7 +1536,7 @@ preserve
         lpoly ll_cf five_min_level_elapsed if !missing(at_values), at(at_values) gen(LL_cf_sm) degree(0) bw(`bw_cf')
 
     drop at_values
-
+	
     // Smooth the CIs for the intervention curve using the BW calculated above
     capture drop UL_sm_before 
     capture drop LL_sm_before
@@ -1426,24 +1571,10 @@ preserve
 
         drop at_values
 
-// Plot Fig. 5 - left 
+end 
 
-    twoway ///
-        lpoly hp_p five_min_level_elapsed if before == 1,  clcolor(blue)  bw(`bw_hp_p') ///
-        || lpoly hp_p five_min_level_elapsed if after == 1,  clcolor(blue)  bw(`bw_hp_p') ///
-        || rarea UL_sm_before LL_sm_before five_min_level_elapsed if before == 1, sort fcolor(blue%30) lcolor(blue%0) ///
-        || rarea UL_sm_after LL_sm_after five_min_level_elapsed if after == 1, sort fcolor(blue%30) lcolor(blue%0) ///
-        || lpoly avg_cf_hp_p_spec_fleet five_min_level_elapsed if (before == 1 | after == 1), clcolor(green) bw(`bw_cf') ///
-        || rarea UL_cf_sm LL_cf_sm five_min_level_elapsed if (before == 1 | after == 1), sort fcolor(green%30) lcolor(green%0) ///
-        aspectratio(1) xline(0, lwidth(thin) lcolor(gray)) xlabel(-360 "-6" 0 "0" 360 "6" 720 "12" 1080 "18" 1440 "24" 1800 "30" 2160 "36" 2520 "42" 2880 "48") xtitle("Time to flexibility event start (h)") ///
-        ylabel(0(100)600) ytitle("Average HP power in the fleet (W)") ///
-        legend(order(1 "Average across interventions" 3 "95% CI" 5 "Control" 6 "95% CI" ) cols(2) pos(6) size(small)) ///
-        graphregion(color(white) margin(zero)) xsize(8) ysize(8) 
-
-    // Export the plot
-    graph export "Figure5_left.pdf", width(8) height(8) replace
-
-// Plot Fig. 5 - right 
+capture program drop calculation_for_Fig_5_right
+program define calculation_for_Fig_5_right
 
     // Dropping all observations before 
     keep if after == 1
@@ -1483,25 +1614,10 @@ preserve
 
     drop at_values
 
-    //  Plot the graph
-    twoway lpoly power_reduction five_min_level_elapsed, clcolor(orange) yline(0) ///
-        || rarea ul_power_reduction_sm ll_power_reduction_sm five_min_level_elapsed, sort color(orange%30) lcolor(orange%0) ///
-       xlabel(0 "0" 360 "6" 720 "12" 1080 "18" 1440 "24" 1800 "30" 2160 "36" 2520 "42" 2880 "48") ylabel(-200(50)300) ///
-        xtitle("Time to flexibility event start (h)") ytitle("Average HP power reduction in the fleet (W)") legend(order(1 "Average across interventions" 2 "95% CI" ) cols(2) pos(6) size(small)) ///
-        graphregion(color(white) margin(zero)) xsize(8) ysize(8)
+end
 
-    // Export the plot
-    graph export "Figure5_right.pdf", replace
-
-// Quantification of the power reduction
-
-ci means power_reduction if five_min_level_elapsed <= 60 // 1 hours
-ci means power_reduction if five_min_level_elapsed <= 1080 // 18 hours
-ci means power_reduction if five_min_level_elapsed > 1080 & five_min_level_elapsed <= 2160 // From 18h to 36h (fleet-rebound period)
-
-sum power_reduction if five_min_level_elapsed > 1080 & five_min_level_elapsed <= 2160 // From 18h to 36h (fleet-rebound period)
-
-// Plot Fig. 6 
+capture program drop calculation_for_Fig_A15 
+program define calculation_for_Fig_A15
 
     // Additional time variables
 
@@ -1558,6 +1674,62 @@ sum power_reduction if five_min_level_elapsed > 1080 & five_min_level_elapsed <=
 
     drop at_values
 
+end
+
+capture program drop Fig_5_A15_pow_cons_during_event
+program define Fig_5_A15_pow_cons_during_event
+// This program plots both panels of Fig. 5 and Fig. 6
+
+preserve
+
+calculation_for_Fig_5_left
+
+// Plot Fig. 5 - left 
+
+	local bw_hp_p = scalar(bw_hp_p_scalar)
+	local bw_cf = scalar(bw_cf_scalar)
+	
+    twoway ///
+        lpoly hp_p five_min_level_elapsed if before == 1, clcolor(blue)  bw(`bw_hp_p') ///
+        || lpoly hp_p five_min_level_elapsed if after == 1, clcolor(blue)  bw(`bw_hp_p') ///
+        || rarea UL_sm_before LL_sm_before five_min_level_elapsed if before == 1, sort fcolor(blue%30) lcolor(blue%0) ///
+        || rarea UL_sm_after LL_sm_after five_min_level_elapsed if after == 1, sort fcolor(blue%30) lcolor(blue%0) ///
+        || lpoly avg_cf_hp_p_spec_fleet five_min_level_elapsed if (before == 1 | after == 1), clcolor(green) bw(`bw_cf') ///
+        || rarea UL_cf_sm LL_cf_sm five_min_level_elapsed if (before == 1 | after == 1), sort fcolor(green%30) lcolor(green%0) ///
+        aspectratio(1) xline(0, lwidth(thin) lcolor(gray)) xlabel(-360 "-6" 0 "0" 360 "6" 720 "12" 1080 "18" 1440 "24" 1800 "30" 2160 "36" 2520 "42" 2880 "48") xtitle("Time to flexibility event start (h)") ///
+        ylabel(0(100)600) ytitle("Average HP power in the fleet (W)") ///
+        legend(order(1 "Average across interventions" 3 "95% CI" 5 "Control" 6 "95% CI" ) cols(2) pos(6) size(small)) ///
+        graphregion(color(white) margin(zero)) xsize(8) ysize(8) 	
+
+    // Export the plot
+    graph export "Fig_5_left.pdf", width(8) height(8) replace
+
+// Plot Fig. 5 - right 
+
+calculation_for_Fig_5_right
+
+    //  Plot the graph
+    twoway lpoly power_reduction five_min_level_elapsed, clcolor(orange) yline(0) ///
+        || rarea ul_power_reduction_sm ll_power_reduction_sm five_min_level_elapsed, sort color(orange%30) lcolor(orange%0) ///
+       xlabel(0 "0" 360 "6" 720 "12" 1080 "18" 1440 "24" 1800 "30" 2160 "36" 2520 "42" 2880 "48") ylabel(-200(50)300) ///
+        xtitle("Time to flexibility event start (h)") ytitle("Average HP power reduction in the fleet (W)") legend(order(1 "Average across interventions" 2 "95% CI" ) cols(2) pos(6) size(small)) ///
+        graphregion(color(white) margin(zero)) xsize(8) ysize(8)
+
+    // Export the plot
+    graph export "Fig_5_right.pdf", replace
+
+// Quantification of the power reduction
+
+ci means power_reduction if five_min_level_elapsed <= 60 // 1 hours
+ci means power_reduction if five_min_level_elapsed <= 1080 // 18 hours
+ci means power_reduction if five_min_level_elapsed > 1080 & five_min_level_elapsed <= 2160 // From 18h to 36h (fleet-rebound period)
+
+sum power_reduction if five_min_level_elapsed > 1080 & five_min_level_elapsed <= 2160 // From 18h to 36h (fleet-rebound period)
+
+// Plot Fig. A.15 
+
+calculation_for_Fig_A15
+
     //  Plot the graph
     twoway lpoly cumulative_net_energy_saved five_min_level_elapsed, lcolor(orange) degree(0) ///
          || rarea ul_cumul_net_energy_saved_sm ll_cumul_net_energy_saved_sm five_min_level_elapsed if five_min_level_elapsed > 0, sort fcolor(orange%30) lcolor(orange%0)  ///
@@ -1567,17 +1739,20 @@ sum power_reduction if five_min_level_elapsed > 1080 & five_min_level_elapsed <=
         graphregion(color(white) margin(zero))  xsize(8) ysize(8) 
 
     // Export the plot
-    graph export "Figure6.pdf", replace
+    graph export "Fig_A15.pdf", replace
 
 restore
 
 end
 
 ********************************************************************************
-* Figure 7                   										           *
+* Figures A.16: Power profile,                                                 *
+*         A.17: Net power reduction,                                           *
+*            6: Average electricity consumption reduction;                     *
+* per outdoor temperature heterogeneity after a flexibility event is initiated *
 ********************************************************************************
-
-program plot_flex_event_power_profile
+capture program drop Fig_A16_event_power_profile
+program Fig_A16_event_power_profile
 // Program for the plot of the observed and counterfactual power profiles during a flexibility event 
 
 	args bin_value
@@ -1639,7 +1814,7 @@ program plot_flex_event_power_profile
 			lpoly ll five_min_level_elapsed if !missing(at_values), at(at_values) gen(LL_sm_after) degree(0) bw(`bw_hp_p')
 
 	drop at_values
-
+	
 	// Plot the graph
 	twoway ///
 		lpoly hp_p five_min_level_elapsed if before == 1 & event_bin == `bin_value',  clcolor(blue)  bw(`bw_hp_p') ///
@@ -1653,15 +1828,30 @@ program plot_flex_event_power_profile
 		legend(off) ///
 		graphregion(color(white) margin(zero)) xsize(8) ysize(8) 
 
+	// Label the plot accordingly:
+	if `bin_value' == 1 {
+    local bin_label "top_left"
+	}
+	else if `bin_value' == 2 {
+		local bin_label "top_right"
+	}
+	else if `bin_value' == 3 {
+		local bin_label "bottom_left"
+	}
+	else if `bin_value' == 4 {
+		local bin_label "bottom_right"
+	}
+		
 	// Export the plot
-	graph export "FigureA14_`bin_value'.pdf", replace
+	graph export "Fig_A16_`bin_label'.pdf", replace	height(8) width(8)
 
 	// Clean up variables
 	drop UL_cf_sm LL_cf_sm UL_sm_before LL_sm_before UL_sm_after LL_sm_after
 
 end
 
-program plot_flex_event_power_reduction
+capture program drop Fig_A17_event_power_reduction
+program Fig_A17_event_power_reduction
 // Program for the plot of the net power reduction during a flexibility event 
 
 	args bin_value
@@ -1693,17 +1883,32 @@ program plot_flex_event_power_reduction
 		xlabel(0 "0" 360 "6" 720 "12" 1080 "18" 1440 "24" 1800 "30" 2160 "36" 2520 "42" 2880 "48") ylabel(-900(100)900) ///
 		xtitle("Time to flexibility event start (h)") ytitle("Average HP power reduction in the fleet (W)") legend(off) ///
 		graphregion(color(white) margin(zero)) xsize(8) ysize(8)
-
+	
+	// Label the plot accordingly:
+	if `bin_value' == 1 {
+    local bin_label "top_left"
+	}
+	else if `bin_value' == 2 {
+		local bin_label "top_right"
+	}
+	else if `bin_value' == 3 {
+		local bin_label "bottom_left"
+	}
+	else if `bin_value' == 4 {
+		local bin_label "bottom_right"
+	}
+		
 	// Export the plot
-	graph export "FigureA15_`bin_value'.pdf", replace
+	graph export "Fig_A17_`bin_label'.pdf", replace	height(8) width(8)
 
 	// Clean up variables
 	drop ul_power_reduction_sm ll_power_reduction_sm
 
 end
 
-program define F7_flex_event_temp
-// This program plots all panels of Fig. 7
+capture program drop Fig_6_event_temp
+program define Fig_6_event_temp
+// This program plots all curves of Fig. 6
 
 use data_prepared, clear
 sort hh_id time
@@ -1779,10 +1984,10 @@ preserve
 
     // Plot of the observed and counterfactual power profiles during a flexibility event
 
-    plot_flex_event_power_profile 1
-    plot_flex_event_power_profile 2
-    plot_flex_event_power_profile 3
-    plot_flex_event_power_profile 4
+    Fig_A16_event_power_profile 1
+    Fig_A16_event_power_profile 2
+    Fig_A16_event_power_profile 3
+    Fig_A16_event_power_profile 4
 
     // Additional variables for the plot of the net power reduction during a flexibility event
 
@@ -1809,10 +2014,10 @@ preserve
 
     // Plot of the net power reduction during a flexibility event 
 
-    plot_flex_event_power_reduction 1
-    plot_flex_event_power_reduction 2
-    plot_flex_event_power_reduction 3
-    plot_flex_event_power_reduction 4
+    Fig_A17_event_power_reduction 1
+    Fig_A17_event_power_reduction 2
+    Fig_A17_event_power_reduction 3
+    Fig_A17_event_power_reduction 4
 
     // Additional variables for the cumulative electricity consumption reduction (kWh) during a flexibility event
 
@@ -1853,7 +2058,7 @@ preserve
         ylabel(0(0.5)5) ytitle("Average electricity consumption" "reduction per HP in the fleet (kWh)") yline(0) ///
         aspectratio(1) graphregion(color(white) margin(zero)) xsize(8) ysize(8)
 
-    graph export "Figure7.pdf", replace
+    graph export "Fig_6.pdf", replace height(8) width(8)
 
     // Extracting the amount of electricity saved (in kWh) in each hour of the flexibility event for the price analysis
 
@@ -1870,11 +2075,11 @@ restore
 end
 
 ********************************************************************************
-* Figure 8										                               *
+* Figure 7: average savings per HP and flexibility event in a fleet            *
 ********************************************************************************
-
-program define F8_both_panels
-// This program plots all panels of Fig. 8
+capture program drop Fig_7_both_panels
+program define Fig_7_both_panels
+// This program plots all panels of Fig. 7
 
 // Preamble
 
@@ -1892,6 +2097,8 @@ drop if missing(phase2_avg_money) // Too far into the season, last observations 
 
 // Text:
 
+pwcorr dam_price temp, sig star(0.05)
+
 ci means phase1_avg_money
 ci means phase2_avg_money
 
@@ -1900,7 +2107,7 @@ pwcorr dam_price temp if temp_heterogeneity_category == "b36", sig star(0.05)
 pwcorr dam_price temp if temp_heterogeneity_category == "b69", sig star(0.05)
 pwcorr dam_price temp if temp_heterogeneity_category == "ab9", sig star(0.05)
 	
-// Figure 8 - right 
+// Figure 7 - right 
 
     preserve
 
@@ -1949,11 +2156,11 @@ pwcorr dam_price temp if temp_heterogeneity_category == "ab9", sig star(0.05)
         xtitle("Average day-ahead price within 36 h" "after flexibility event start (€/kWh)") ///
         ytitle("Average savings per event" "and HP in the fleet (€)") graphregion(color(white) margin(zero)) xsize(8) ysize(8))
 
-    graph export "Figure8_right.pdf", replace
+    graph export "Fig_7_right.pdf", replace width(8) height(8)
 
     restore
 
-// Figure 8 - left:
+// Figure 7 - left:
 
     capture drop rank*
     capture drop time_share*
@@ -1981,7 +2188,7 @@ pwcorr dam_price temp if temp_heterogeneity_category == "ab9", sig star(0.05)
 		yline(`phase1_avg_money_mean', lcolor(blue) lwidth(1.5 pt)) ///
 		yline(`phase2_avg_money_mean', lcolor(orange) lwidth(1.5 pt))
 
-    graph export "Figure8_left.pdf", replace
+    graph export "Fig_7_left.pdf", replace width(8) height(8)
 	
 	// Text: 
 	
@@ -1991,16 +2198,361 @@ pwcorr dam_price temp if temp_heterogeneity_category == "ab9", sig star(0.05)
 	sum phase2_avg_money
     sum phase2_avg_money if phase2_avg_money <= 0
 
-	keep if time_share2 >= 95 // Mostly Nov - Dec 2022: peak of energy crisis
+	keep if time_share2 >= 95 // Mostly Nov - Dec 2022: energy crisis
 	
 	frame change default
 
 end
 
 ********************************************************************************
+* Figure 8: average payback period of installing a smart thermostat  -         *
+********************************************************************************
+capture program drop aggregator_optimal_allocation
+program define aggregator_optimal_allocation
+// This program performs the aggregator's optimal allocation explained in the text
+// Must specify two arguments: the number of yearly events ; then the HS index
+    args num_events hs_filter
+    
+    frame change default
+
+    capture frame drop monetary_valuation_heterogeneous
+    frame create monetary_valuation_heterogeneous
+    frame change monetary_valuation_heterogeneous
+
+    import delimited "money_shifted_heterogeneous.csv", clear // Import dataset
+
+    drop if temp_heterogeneity_category == "nan"
+    drop if missing(phase2_avg_money) // Remove observations without 36h worth of observations after the start
+
+    // Convert time variable to Stata time format
+    gen double event_time = clock(time, "YMDhms")
+    format event_time %tc
+    drop time
+    rename event_time time
+
+    // Assign heating season labels
+    gen hs = 0
+    replace hs = 1 if time >= clock("2022-11-14 00:00:00", "YMDhms") - 7 * 24 * 60 * 60 * 1000 ///
+                      & time <= clock("2023-04-15 23:59:59", "YMDhms") + 7 * 24 * 60 * 60 * 1000
+
+    replace hs = 2 if time >= clock("2023-10-30 00:00:00", "YMDhms") - 7 * 24 * 60 * 60 * 1000 ///
+                      & time <= clock("2024-03-24 23:59:59", "YMDhms") + 7 * 24 * 60 * 60 * 1000
+
+    // Apply filtering based on `hs_filter`
+    if `hs_filter' == 1 {
+        drop if hs == 2  // Keep only HS1
+    }
+    if `hs_filter' == 2 {
+        drop if hs == 1  // Keep only HS2
+    }
+
+    // Define frame name dynamically
+    local frame_name = "selected_events_`hs_filter'"
+
+    // Drop and create the corresponding frame
+    capture frame drop `frame_name'
+    frame create `frame_name'
+    frame `frame_name' { // Generate the frame with the correct number of observations
+        clear
+        set obs `num_events'
+        gen n = .
+        gen net_savings = .
+    }
+    
+    preserve // preserve frame monetary_valuation_heterogeneous
+    
+    // Sort by descending phase2_avg_money
+    gsort -phase2_avg_money time
+
+    local k = 1
+    while `k' <= `num_events' & _N > 0 {
+        
+        // Select the top event
+        local top_event_time = time[1]
+        local top_phase2 = phase2_avg_money[1]
+        
+        // Store in the selected frame
+        frame `frame_name' {
+            replace n = `k' in `k'
+            replace net_savings = `top_phase2' in `k'
+        }
+        
+        // Remove all observations within 48 hours of the selected event
+        drop if abs(time - `top_event_time') < 48 * 3600000  // 48 hours in milliseconds
+        
+        // Re-sort to get the next highest value before starting the loop over
+        gsort -phase2_avg_money time
+        
+        local ++k
+    }
+    
+    restore
+    frame change default
+end
+
+capture program drop merge_selected_events
+program define merge_selected_events 
+// This program merges the aggregator's optimal allocation into a single dataset for convenience
+
+frame change default
+
+capture frame drop merged_selected_events
+frame create merged_selected_events
+frame change merged_selected_events
+
+frame selected_events_1 {
+    rename net_savings net_savings_HS1
+    tempfile f1
+    save `f1'
+}
+
+frame selected_events_2 {
+    rename net_savings net_savings_HS2
+    tempfile f2
+    save `f2'
+}
+
+// Load the first dataset into the new frame
+use `f1', clear
+
+// Merge other datasets based on "n"
+merge 1:1 n using `f2', nogen
+
+// Save the merged dataset
+save "merged_selected_events.dta", replace
+
+frame change merged_selected_events
+
+// Load the merged dataset
+use "merged_selected_events.dta", clear
+
+end
+
+capture program drop calculation_for_Fig_8
+program define calculation_for_Fig_8
+// This program works on a dataset of an optimal allocation of flexibility events and then calculates the cumulative savings and payback period. 
+// Must specify two groups of arguments: first for thermostat costs, second for discount rates expressed in percentage points
+    args tc_group r_group
+
+    // Switch to the appropriate frame
+    frame change merged_selected_events
+
+    // Generate cumulative sums of economic gains from flex events (if not already done)
+    capture drop C_n_HS1
+    capture drop C_n_HS2
+    gen C_n_HS1 = sum(net_savings_HS1)
+    gen C_n_HS2 = sum(net_savings_HS2)
+
+    // Loop over each thermostat cost in the first group
+    foreach tc of local tc_group {
+        // No discounting: calculate payback period variables for HS1 and HS2
+        capture drop PP_r0_`tc'_HS1
+        capture drop PP_r0_`tc'_HS2
+        gen PP_r0_`tc'_HS1 = `tc' / C_n_HS1
+        gen PP_r0_`tc'_HS2 = `tc' / C_n_HS2
+
+        // Now loop over each discount rate in the second group
+        foreach r of local r_group {
+            // Calculate the discount factor ρ = 1/(1+r)
+            local rho = 1 / (1 + (`r'/100))
+            // Discounting case for HS1 and HS2
+            capture drop PP_r`r'_`tc'_HS1
+            capture drop PP_r`r'_`tc'_HS2
+            gen PP_r`r'_`tc'_HS1 = (log((`tc' / C_n_HS1 ) * (`rho' - 1) + 1) / log(`rho')) - 1
+            gen PP_r`r'_`tc'_HS2 = (log((`tc' / C_n_HS2 ) * (`rho' - 1) + 1) / log(`rho')) - 1
+        }
+    }
+end
+
+capture program drop interpolate_crossing_for_Fig_8
+program define interpolate_crossing_for_Fig_8, rclass
+// This function is purely 'cosmetic'. It interpolates the data for each curve to find the point where it crosses the y-axis = 100, as 
+// we cut the plot at y = 100. Of course, if the curve already starts below y-axis = 100, because the logarithm is not defined for those
+// points, then no interpolation is done. In practice it means: no interpolation for discounted plots. 
+
+    syntax varname, thresh(real)
+    
+    local var "`varlist'"
+    di "Interpolating crossing for variable `var' at threshold `thresh'"
+	    
+    * Create markers for transition:
+    capture drop A_`var' 
+	capture drop B_`var'
+    gen A_`var' = 0
+    replace A_`var' = 1 if `var' > `thresh' & `var'[_n+1] < `thresh' & !missing(`var') // This line means the dataset should not be sorted before fully finished with the program calls, otherwise the inserted observations interfere with the condition "`var'[_n+1] < `thresh'"...
+
+    gen  B_`var' = 0
+    replace  B_`var' = 1 if `var' < `thresh' & `var'[_n-1] > `thresh' & !missing(`var') // Same
+
+    * Extract values from the observation with A==1 (last above threshold)
+    su `var' if A_`var'==1
+    local yA = r(mean)
+    su n if A_`var'==1
+    local nA = r(mean)
+    
+    * Extract values from the observation with B==1 (first below threshold)
+    su `var' if B_`var'==1
+    local yB = r(mean)
+    su n if B_`var'==1
+    local nB = r(mean)
+    
+    * Calculate the slope and intercept between the two points
+    local m = (`yB' - `yA') / (`nB' - `nA')
+    local p = `yA' - `m' * `nA'
+    
+    * Solve for the x-value (n) where `var' equals the threshold
+    local xthresh = (`thresh' - `p') / `m'
+    di "The interpolated crossing occurs at n = " `xthresh' " with yA = " `yA' " and yB = " `yB' " and m = " `m' " and p = " `p'
+    
+    * Create the indicator variable if it doesn't already exist
+    capture drop pl_`var'
+	gen pl_`var' = .
+ 
+	insobs 1
+    
+    * Replace the newly inserted observation (last obs) with the interpolated values
+    replace n = `xthresh' in L
+    replace `var' = `thresh' in L
+    replace pl_`var' = 1 in L
+	    	
+	replace pl_`var' = 1 if missing(pl_`var') & (n > `xthresh' & !missing(`var'))
+	
+end
+
+capture program drop Fig_8_both_panels
+program define Fig_8_both_panels
+// This program plots all panels of Fig. 8 (with and without discounting)
+
+// First we perform the optimal allocation of 50 events per HS 
+	aggregator_optimal_allocation 50 1
+	aggregator_optimal_allocation 50 2
+
+// Second we merge these events into a single dataset
+	merge_selected_events
+
+// Third we clean this dataset and compute the cumulative yearly savings and the payback period
+	// Assuming a "vector" of smart thermostat prices and a vector of discount rates expressed in percentage points
+
+	calculation_for_Fig_8 "120 160 200" "3 5 7"
+
+// Fourth we have to interpolate the starting points of the curves when the graph is 'cut' at y_threshold = 100 
+// We only do that for non-discounted curves, as discounted curves already start below the threshold. 
+// See the explanation in the program interpolate_crossing_for_Fig_8.
+
+local threshold = 100
+sort n 
+
+// r = 0%
+	// HS1: 
+	interpolate_crossing_for_Fig_8 PP_r0_120_HS1, thresh(`threshold')
+	interpolate_crossing_for_Fig_8 PP_r0_160_HS1, thresh(`threshold')
+	interpolate_crossing_for_Fig_8 PP_r0_200_HS1, thresh(`threshold')
+
+	// HS2: 
+
+	interpolate_crossing_for_Fig_8 PP_r0_120_HS2, thresh(`threshold')
+	interpolate_crossing_for_Fig_8 PP_r0_160_HS2, thresh(`threshold')
+	interpolate_crossing_for_Fig_8 PP_r0_200_HS2, thresh(`threshold')
+	
+// Fifth: plots
+
+	// r = 0%:
+
+		twoway ///
+		(line PP_r0_120_HS1 n if pl_PP_r0_120_HS1 == 1, lcolor(blue%35) lwidth(medium) lp(shortdash) sort) ///
+		(line PP_r0_160_HS1 n if pl_PP_r0_160_HS1 == 1, lcolor(blue) lwidth(medium) sort) ///
+		(line PP_r0_200_HS1 n if pl_PP_r0_200_HS1 == 1, lcolor(blue%35) lwidth(medium) lp(dash)  sort) ///
+		(line PP_r0_120_HS2 n if pl_PP_r0_120_HS2 == 1, lcolor(orange%35) lwidth(medium) lp(shortdash) sort) ///
+		(line PP_r0_160_HS2 n if pl_PP_r0_160_HS2 == 1, lcolor(orange) lwidth(medium) sort) ///
+		(line PP_r0_200_HS2 n if pl_PP_r0_200_HS2 == 1, lcolor(orange%35) lwidth(medium) lp(dash)  sort), ///
+		xlabel(0(5)50) ylabel(0 10 20 30 40 50 60 70 80 90 100) yline(0)  ///
+		yscale(range(0 100) noextend ) ///
+		xtitle("Number of flexibility events per heating season") ///
+		ytitle("Payback period of making a HP flexible (years)") ///
+		legend(order(- "HS1" - "Investment cost for" "making HP flexible:" 1  "             €120             " 2 "             €160             " 3 "             €200             " - "HS2" - " "  4 " " 5 " " 6 " ") pos(6) col(2) rows(5) colfirst   size(medsmall) symxsize(18)  keygap(0) ) ///
+		graphregion(color(white)) xsize(8) ysize(11)
+		
+		graph save "Graph" "Fig_8_left_legend_non_edited.gph", replace
+		// Then a bit of work with Stata's graph editor is needed to align the legend labels and add text "r=0%" top right corner. 
+		graph export "Fig_8_left_legend_non_edited.pdf", replace 
+		
+	// r = 5%:
+
+		twoway ///
+		(line PP_r5_120_HS1 n , lcolor(blue%35) lwidth(medium) lp(shortdash) sort) ///
+		(line PP_r5_160_HS1 n , lcolor(blue) lwidth(medium) sort) ///
+		(line PP_r5_200_HS1 n, lcolor(blue%35) lwidth(medium) lp(dash)  sort) ///
+		(line PP_r5_120_HS2 n , lcolor(orange%35) lwidth(medium) lp(shortdash) sort) ///
+		(line PP_r5_160_HS2 n , lcolor(orange) lwidth(medium) sort) ///
+		(line PP_r5_200_HS2 n , lcolor(orange%35) lwidth(medium) lp(dash)  sort), ///
+		xlabel(0(5)50) ylabel(0 10 20 30 40 50 60 70 80 90 100) yline(0)  ///
+		yscale(range(0 100) noextend ) ///
+		xtitle("Number of flexibility events per heating season") ///
+		ytitle("Payback period of making a HP flexible (years)") ///
+		legend(order(- "HS1" - "Investment cost for" "making HP flexible:" 1  "             €120             " 2 "             €160             " 3 "             €200             " - "HS2" - " "  4 " " 5 " " 6 " ") pos(6) col(2) rows(5) colfirst   size(medsmall) symxsize(18)  keygap(0) ) ///
+		graphregion(color(white)) xsize(8) ysize(11)
+	 
+		graph save "Graph" "Fig_8_right_legend_non_edited.gph", replace
+		// Then a bit of work with Stata's graph editor is needed to align the legend labels and add text "r=5%" top right corner. 
+		graph export "Fig_8_right_legend_non_edited.pdf", replace 
+		 
+		 
+// Figure A.18: cumulative savings: 
+
+	// We add an observation for the zero of the graph: 0 event = 0 savings. 
+		
+	insobs 1
+	replace n = 0 in L
+	replace C_n_HS1 = 0 in L
+	replace C_n_HS2 = 0 in L	    	
+		
+	// Plot:
+
+	twoway ///
+	(line C_n_HS1 n, lcolor(blue) lwidth(medium) sort) ///
+	(line C_n_HS2 n, lcolor(orange) lwidth(medium) sort), ///
+	xlabel(0(5)50) ylabel(0(2)18) yline(0)  ///
+		xtitle("Number of flexibility events per heating season") ///
+		ytitle("Cumulative savings per heating season" "and HP from flexibility events (€)") ///
+		legend(order(1 "HS1" 2 "HS2") pos(6) col(2) colfirst   size(medsmall) ) ///
+		graphregion(color(white)) xsize(8) ysize(8)
+		
+	graph export "Fig_A18.pdf", replace 
+	
+erase merged_selected_events.dta
+
+// Text:
+
+sum C_n_HS1 if n == 50
+sum C_n_HS2 if n == 50
+
+end
+
+********************************************************************************
+* Section 4.3.1: statements in the text with respect to overrules	           *
+********************************************************************************
+capture program drop overrules_temperatures
+program overrules_temperatures
+
+use data_prepared, clear 
+ci means t_in if reason_stop != 0 & reason_stop != -1 & reason_stop != -2
+
+use presurvey_data, clear
+sum Q13_1
+tab hh_id Q13_1
+
+use data_prepared, clear
+di "Indoor temperature at overrule (non-preemptive) ; household 9:"
+sum t_in if reason_stop != 0 & reason_stop != -1 & reason_stop != -2 & reason_stop != -3.1 & hh_id == 9
+di "Indoor temperature at overrule (non-preemptive) ; households 2, 3, 5, 6:"
+sum t_in if reason_stop != 0 & reason_stop != -1 & reason_stop != -2 & reason_stop != -3.1 & (hh_id == 2 | hh_id == 3 | hh_id == 5 | hh_id == 6)
+
+end
+
+********************************************************************************
 * Figure 9: Histogram of temperature drop							           *
 ********************************************************************************
-
+capture program drop F9_hist_temp_drop
 program F9_hist_temp_drop 
 // This program plots Figure 9.
 
@@ -2012,7 +2564,6 @@ frame change default
 // Identify interventions that were manually overruled 
 
 capture drop manually_overruled_during_int
-
 gen manually_overruled_during_int = 0 if reason_stop != 0 & reason_stop != -3
 replace manually_overruled_during_int = 1 if reason_stop == -3
 
@@ -2055,182 +2606,14 @@ twoway (hist temperature_drop if manually_overruled_during_int == 0 & temperatur
        xline(`avg_drop_auto', lwidth(medthin) lcolor(blue)) xline(`avg_drop_manu', lwidth(medthin) lcolor(orange)) ///
        aspectratio(1) xsize(8) ysize(8) graphregion(color(white) margin(zero))
 
-graph export "Figure9.pdf", replace
+graph export "Fig_9.pdf", replace width(8) height(8)
 
-end
-
-* Study of manual overrules frequency throughout the experiment 
-
-program define Study_manual_overrules
-
-use data_prepared, clear
-sort hh_id time
-
-// Timing of manual overrules
-
-capture drop period_of_day_f
-
-gen period_of_day_f = 0 
-replace period_of_day_f = 1 if hourofday > 6 & hourofday <= 12
-replace period_of_day_f = 2 if hourofday > 12 & hourofday <= 18
-replace period_of_day_f = 3 if (hourofday > 18 & hourofday <= 23) | hourofday == 0 
-replace period_of_day_f = 4 if hourofday > 0 & hourofday <= 6 
-
-tab period_of_day_f if reason_stop == -3
-
-// Identification of the successive order in which interventions were experienced by households...
-capture drop intervention_consecutive_order*
-
-    // ... throughout the whole experiment
-        sort hh_id time
-
-        // Generate a variable to count interventions in order, initializing it with missing values for now
-        gen intervention_consecutive_order = .
-
-        // Loop through each household
-        levelsof hh_id, local(households)
-
-        foreach hh in `households' {
-            local int_count = 0
-
-            // Loop over all observations for the current household
-            quietly forvalues i = 1/`=_N' {
-                // If the household matches and reason_stop is not 0, update the count
-                if hh_id[`i'] == `hh' & reason_stop[`i'] != 0 {
-                    // Increment the intervention count
-                    local ++int_count
-                    // Replace intervention_consecutive_order for the specific observation using the row number `i'
-                    replace intervention_consecutive_order = `int_count' in `i'
-                }
-            }
-        }
-
-    // ... for HS1 and HS2 separately
-        sort hh_id hs_index time
-
-        // Generate variables to count interventions in order for each heating season
-        gen intervention_consecutive_order_1 = .
-        gen intervention_consecutive_order_2 = .
-
-        // Loop through each household
-        levelsof hh_id, local(households)
-
-        foreach hh in `households' {
-            local int_count_HS1 = 0
-            local int_count_HS2 = 0
-
-            quietly forvalues i = 1/`=_N' {
-                // HS1:
-                if hh_id[`i'] == `hh' & hs_index[`i'] == 1 & reason_stop[`i'] != 0 {
-                    local ++int_count_HS1
-                    replace intervention_consecutive_order_1 = `int_count_HS1' in `i'
-                }
-
-                // HS2:
-                if hh_id[`i'] == `hh' & hs_index[`i'] == 2 & reason_stop[`i'] != 0 {
-                    local ++int_count_HS2
-                    replace intervention_consecutive_order_2 = `int_count_HS2' in `i'
-                }
-            }
-        }
-
-// Binning the interventions in groups of 5 successives interventions on each household
-    local bin_group = 5
-
-    capture drop order_group
-    capture drop order_group_1 
-    capture drop order_group_2
-
-    gen order_group = floor((intervention_consecutive_order - 1) /`bin_group') + 1 if intervention_consecutive_order >= 0
-    gen order_group_1 = floor((intervention_consecutive_order_1 - 1) /`bin_group') + 1 if intervention_consecutive_order_1 >= 0
-    gen order_group_2 = floor((intervention_consecutive_order_2 - 1) /`bin_group') + 1 if intervention_consecutive_order_2 >= 0
-
-    qui sum order_group
-    local max_group = r(max)
-	
-// Level 1: is there correlation between a dummy for manual overrule and the order in which the intervention is experienced...
-
-    capture drop manual_overrule
-    gen manual_overrule = 0 
-    replace manual_overrule = 1 if reason_stop != 0 & reason_stop != -1 & reason_stop != -2
-
-    // ... over the whole sample
-        pwcorr manual_overrule intervention_consecutive_order if hs_index == 2, sig star(0.05) // Significant, negligible
-
-    // ... within each HS separately 
-        pwcorr manual_overrule intervention_consecutive_order_1 if hs_index == 1, sig star(0.05) o // Significant, negligible
-        pwcorr manual_overrule intervention_consecutive_order_2 if hs_index == 2, sig star(0.05) o // Not significant
-
-// Level 2: is there correlation between the share of manually overruled interventions within bins and the bin indicator, indicating in which order ('batch') the intervention is experienced...
-
-    // Work in another frame
-    frame change default
-    capture frame drop manual_overrule_habituation
-    frame put intervention_consecutive_order intervention_consecutive_order_1 intervention_consecutive_order_2 manual_overrule hs_index reason_stop order_group order_group_1 order_group_2, into(manual_overrule_habituation)
-
-    frame change manual_overrule_habituation
-    keep if !missing(intervention_consecutive_order)
-    sort intervention_consecutive_order_1 intervention_consecutive_order_2
-    tab manual_overrule
-
-    // ... over the whole sample
-        capture drop total_interventions
-        capture drop manual_overrules
-        capture drop percent_overruled
-
-        egen total_interventions = count(intervention_consecutive_order), by(order_group)
-        egen manual_overrules = total(manual_overrule), by(order_group)
-        gen percent_overruled = (manual_overrules / total_interventions) * 100
-
-    // ... within each HS separately
-
-        // HS 1
-            capture drop total_interventions_1
-            capture drop manual_overrules_1
-            capture drop percent_overruled_1
-
-            egen total_interventions_1 = count(intervention_consecutive_order_1), by(order_group_1)
-            egen manual_overrules_1 = total(manual_overrule), by(order_group_1)
-            gen percent_overruled_1 = (manual_overrules_1 / total_interventions_1) * 100
-
-        // HS 2
-            capture drop total_interventions_2
-            capture drop manual_overrules_2
-            capture drop percent_overruled_2
-
-            egen total_interventions_2 = count(intervention_consecutive_order_2), by(order_group_2)
-            egen manual_overrules_2 = total(manual_overrule), by(order_group_2)
-            gen percent_overruled_2 = (manual_overrules_2 / total_interventions_2) * 100
-
-    // Results: 
-        // Whole sample:
-            pwcorr manual_overrule  intervention_consecutive_order, sig star(0.05) o // Non significant
-            pwcorr percent_overruled  order_group, sig star(0.05) o // Significant, weak 
-
-        // Throughout HS1: 
-            pwcorr manual_overrule  intervention_consecutive_order_1, sig star(0.05) o // Significant, weak
-            pwcorr percent_overruled_1  order_group_1, sig star(0.05) o // Significant, strong
-
-        // Throughout HS2: 
-            pwcorr manual_overrule  intervention_consecutive_order_2, sig star(0.05) o // Non significant
-            pwcorr percent_overruled_2  order_group_2, sig star(0.05) o // Significant, moderate
-
-    // Robustness check: is this correlated with a higher discomfort potentially happening by the end of the HS (proxy: temperature_drop)?
-        frame change default
-				// Temperature drop by the intervention as a proxy for discomfort 
-				capture drop temperature_drop 
-				gen temperature_drop = t_in_0 - t_in
-        pwcorr temperature_drop  intervention_consecutive_order_1, sig star(0.05) // Non significant
-        pwcorr temperature_drop  intervention_consecutive_order_2, sig star(0.05) // Non significant
-
-        pwcorr temperature_drop  order_group_1, sig star(0.05) // Non significant
-        pwcorr temperature_drop  order_group_2, sig star(0.05) // Non significant
 end
 
 ********************************************************************************
 * Section 4.3.3: post-experiment survey  							           *
 ********************************************************************************
-
+capture program drop postexperiment_survey
 program postexperiment_survey
 
 use postsurvey_data, clear 
@@ -2247,12 +2630,133 @@ tab strategy_discomfort
 end
 
 ********************************************************************************
-* Appendices														           *
+********************************************************************************
+**                                                                            **
+**                                 APPENDICES                                 **
+**              														      **
+********************************************************************************
 ********************************************************************************
 
-* Fig. 10
+********************************************************************************
+* Appendix A: Additional figures and tables			     			           *
+********************************************************************************
 
-program define App_F10_hist_pow_temp
+* Table A.4: Average monthly temperatures during the experimental period
+capture program drop App_A1_Table_A4
+program define App_A1_Table_A4
+
+use data_prepared, clear
+sort hh_id time
+
+local months 10 11 12 1 2 3 4
+
+foreach month of local months {
+    qui sum monthly_avg_hs if monthofyear == `month' & hs_index == 1
+    local mean_hs1 = round(r(mean), 0.1)
+    quietly summarize monthly_avg_hs if monthofyear == `month' & hs_index == 2
+    local mean_hs2 = round(r(mean), 0.1)
+
+    di "Average monthly mean temperature for month `month' is `mean_hs1' (HS1) ; `mean_hs2' (HS2)"
+
+}
+
+capture drop hs_mean
+egen hs_mean = mean(daily_avg_t_out) if hs1_window == 1 | hs2_window == 1, by(hs_index)
+
+end
+
+* Table A.5: Sample composition
+capture program drop App_A2_Table_A5
+program define App_A2_Table_A5
+
+use data_prepared, clear
+sort hh_id time
+
+// Who is decoupled? 
+
+tab hh_id decoupled
+
+// How many interventions for each HH? 
+
+qui levelsof hh_id, local(hh)
+
+local total_unique = 0
+
+foreach label of local hh {
+    qui distinct unique_index if hh_id == `label' & unique_index != 0 & reason_stop != 0 
+    local unique_count = r(ndistinct)
+    di "`label' has " `unique_count' " unique values of unique_index (i.e. interventions)"
+    
+    local total_unique = `total_unique' + `unique_count'
+}
+
+di "Total unique values of unique_index (i.e. interventions) across all HHs: " `total_unique'
+
+// How many manual overrules for each HH?
+
+qui levelsof hh_id, local(hh)
+
+local total_unique = 0
+
+foreach label of local hh {
+    qui distinct unique_index if hh_id == `label' & unique_index != 0 & reason_stop != 0 & reason_stop != -1 & reason_stop != -2
+    local unique_count = r(ndistinct)
+    di "`label' has " `unique_count' " unique values of manual overrules"
+    
+    local total_unique = `total_unique' + `unique_count'
+}
+
+di "Total manual overrules across all HHs: " `total_unique'
+
+// How many in HS1? 
+
+preserve
+
+keep if hs_index == 1
+
+qui levelsof hh_id, local(hh)
+
+local total_unique = 0
+
+qui foreach label of local hh {
+    qui distinct unique_index if hh_id == `label' & unique_index != 0 & reason_stop != 0 
+    local unique_count = r(ndistinct)
+    di "`label' has " `unique_count' " unique values of unique_index (i.e. interventions)"
+    
+    local total_unique = `total_unique' + `unique_count'
+}
+
+di "Total unique values of unique_index (i.e. interventions) across all HHs in HS1: " `total_unique'
+
+restore 
+
+// How many in HS2? 
+
+preserve
+
+keep if hs_index == 2
+
+qui levelsof hh_id, local(hh)
+
+local total_unique = 0
+
+qui foreach label of local hh {
+    qui distinct unique_index if hh_id == `label' & unique_index != 0 & reason_stop != 0 
+    local unique_count = r(ndistinct)
+    di "`label' has " `unique_count' " unique values of unique_index (i.e. interventions)"
+    
+    local total_unique = `total_unique' + `unique_count'
+}
+
+di "Total unique values of unique_index (i.e. interventions) across all HHs in HS2: " `total_unique'
+
+restore 
+
+end
+
+* Fig. A.10: Histograms of indoor temperature and heat pump power in non-intervention period
+capture program drop App_A3_Fig_A10
+program define App_A3_Fig_A10
 
 use data_prepared, clear
 sort hh_id time
@@ -2265,7 +2769,7 @@ local avg_hp_p = r(mean)
 hist hp_p if intervention_dummy == 0 & hp_p <= 1500, width(50) xtitle("Heat pump power (W)")  note("In non-intervention and non-rebound periods.") xline(`avg_hp_p', lcolor(edkblue) lwidth(1.5 pt)) ///
  graphregion(color(white) margin(zero))  xsize(5) ysize(5) color(blue%35) xlabel(0(250)1500)
 
-graph export "FigureA10_left.pdf", replace
+graph export "Fig_A10_left.pdf", width(8) height(8) replace
 
 // Right panel: histogram of indoor temperature
 
@@ -2275,13 +2779,13 @@ local avg_t_in = r(mean)
 hist t_in if intervention_dummy == 0 & (hs1_window == 1 | hs2_window == 1) & t_in > 16 & t_in <= 26, width(.5) xtitle("Indoor temperature (°C)") note("In non-intervention and non-rebound periods.") xline(`avg_t_in', lcolor(edkblue) lwidth(1.5 pt)) ///
  graphregion(color(white) margin(zero))  xsize(5) ysize(5) color(blue%35) xlabel(16(1)26)
 
-graph export "FigureA10_right.pdf", replace
+graph export "Fig_A10_right.pdf", width(8) height(8) replace
 
 end
 
-* Fig. 11
-
-program define App_F11_pow
+* Fig. A.11: Average heat pump daily profile (entire heat pump sample)
+capture program drop App_A4_Fig_A11
+program define App_A4_Fig_A11
 
 use data_prepared, clear
 sort hh_id time
@@ -2330,15 +2834,15 @@ preserve
             ylabel(0(100)600) ytitle("Average HP power consumption (W)") ///
             legend(order(1 "Non-intervention" 2 "95% CI" 3 "Intervention" 4 "95% CI") cols(2) pos(6) size(medsmall))  graphregion(color(white) margin(zero))  xsize(8) ysize(8) 
 
-        graph export "FigureA11.pdf", replace
+        graph export "Fig_A11.pdf", width(8) height(8) replace
 
 restore
 
 end
 
-* Fig. 12
-
-program define App_F12_pow_profile_temp
+* Fig. A.12: Comparison of average heat pump daily profiles across different outdoor temperature ranges
+capture program drop App_A5_Fig_A12
+program define App_A5_Fig_A12
 
 use data_prepared, clear
 sort hh_id time
@@ -2402,43 +2906,64 @@ preserve
         ylabel(0(200)1200) ytitle("Average HP power consumption (W)") ///
         legend(order(1 "< 3°C" 3 "3 to 6 °C" 5 "6 to 9 °C" 7 "> 9 °C") cols(2) pos(6) subtitle("Daily average outdoor temperature", size(medsmall)) size(medsmall))  graphregion(color(white) margin(zero))  xsize(8) ysize(8) 
 
-graph export "FigureA12.pdf", replace
+graph export "Fig_A12.pdf", width(8) height(8) replace
 
 restore
 
 end
 
-* Fig. 13
+* Fig. A.13: Intervention rebound period: extended duration plots
+capture program drop App_A6_Fig_A13
+program define App_A6_Fig_A13
 
-program define App_F13_share_of_HPs
-// This program plots Fig. 13
+use experiment_data, clear
+
+code_for_preparation 6 48 20 2400 2640 18 // 2640 is a 10% increase over 2400 mins (= 40 hours). Useful to stabilize boundary effects of the lpoly. But we don't plot further than 40 hours. 
+
+calculation_for_Fig_4
+
+preserve
+
+preparation_plot_Fig_4_right
+    
+    // Plot Fig. 4 - right
+
+    twoway lpoly energy_rebound_after_int time_diff_from_end_5min if time_diff_from_end_5min <= 2400, clcolor(orange) degree(0) ///
+         || rarea ul_energy_rebound_smooth ll_energy_rebound_smooth time_diff_from_end_5min if time_diff_from_end_5min <= 2400, sort fcolor(orange%30) lcolor(orange%0) ///
+        aspectratio(1) ytitle("Average post-intervention" "electricity consumption increase (kWh)") ylabel(0(0.5)3.5) ///
+        xtitle("Time to intervention stop (h)") ///
+		xlabel(0 "0" 240 "4" 480 "8" 720 "12" 960 "16" 1200 "20" 1440 "24" 1680 "28" 1920 "32" 2160 "36" 2400 "40") ///
+        legend(order(1 "Average (across interventions)" 2 "95% CI") cols(2) pos(6) size(small)) graphregion(color(white) margin(zero))  xsize(8) ysize(8)  
+
+    graph export "Fig_A13_right.pdf", width(8) height(8) replace
+	
+restore
+
+preserve
+
+preparation_plot_Fig_4_left
+
+    // Plot Fig. 4 - left
+
+    twoway lpoly power_rebound_after_int time_diff_from_end_5min if time_diff_from_end_5min <= 2400, clcolor(orange) degree(0) ///
+        || rarea ul_power_rebound_smooth ll_power_rebound_smooth time_diff_from_end_5min if time_diff_from_end_5min <= 2400, sort fcolor(orange%30) lcolor(orange%0)  ///
+        aspectratio(1) xtitle("Time to intervention stop (h)") ///
+     	xlabel(0 "0" 240 "4" 480 "8" 720 "12" 960 "16" 1200 "20" 1440 "24" 1680 "28" 1920 "32" 2160 "36" 2400 "40") ///
+        ylabel(-100(100)900) ytitle("Average post-intervention" "power consumption increase (W)") yline(0) ///
+        legend(order(1 "Average (across interventions)" 2 "95% CI") cols(2) pos(6) size(small)) graphregion(color(white) margin(zero))  xsize(8) ysize(8)  
+
+graph export "Fig_A13_left.pdf", width(8) height(8) replace
+
+restore
+
+end
+
+* Fig. A.14: Rebound consumption of heat pumps resuming normal operation at the fleet level
+capture program drop App_A7_Fig_A14
+program define App_A7_Fig_A14
 
 use data_prepared, clear
 sort hh_id time
-
-// Share of HPs in each state (blocked/unblocked) after a flexibility event is initiated
-
-    preserve
-
-        keep if five_min_level_elapsed > 0 | after == 1
-
-        collapse (sum) intervention_dummy, by(five_min_level_elapsed)
-
-        sum intervention_dummy
-        local max = r(max)
-
-        replace intervention_dummy = intervention_dummy/`max'
-
-        gen normal_operation = 1 - intervention_dummy
-
-        twoway line intervention_dummy five_min_level_elapsed if five_min_level_elapsed < 2880 , sort lcolor(blue) ///
-            || line normal_operation five_min_level_elapsed if five_min_level_elapsed < 2880, sort lcolor(green) ///
-            aspectratio(1) xlabel(0 "0" 360 "6" 720 "12" 1080 "18" 1440 "24" 1800 "30" 2160 "36" 2520 "42" 2880 "48") xtitle("Time to flexibility event start (h)") ///
-            ytitle("Average share of HPs") graphregion(color(white) margin(zero))  xsize(8) ysize(8) legend(order(1 "Blocked" 2 "Unblocked" ) cols(2) pos(6) size(medsmall))
-
-        //graph export "Share_blocked_unblocked.pdf", replace
-
-    restore
 	
 preserve
 
@@ -2498,7 +3023,7 @@ twoway lpoly diff five_min_level_elapsed if intervention_dummy == 0, clcolor(gre
     aspectratio(1) xlabel(0 "0" 360 "6" 720 "12" 1080 "18" 1440 "24" 1800 "30" 2160 "36" 2520 "42" 2880 "48") xtitle("Time to flexibility event start (h)") ylabel(-300(100)450) yline(0, lwidth(thin) lcolor(gray))  ///
     ytitle("Average energy consumption" "per event and HP in the fleet (W)") graphregion(color(white) margin(zero))  xsize(8) ysize(8) legend(order(1 "Average across unblocked heat pumps" "(all interventions)" ) cols(2) pos(6) size(medsmall))
 
-graph export "FigureA13.pdf", replace
+graph export "Fig_A14.pdf", replace
 
 
 // Intensity of rebound 
@@ -2508,117 +3033,29 @@ ci means diff if intervention_dummy == 0 & five_min_level_elapsed < 2160 // Firs
 ci means diff if intervention_dummy == 0 & five_min_level_elapsed > 1080 & five_min_level_elapsed < 2160 // Between 18 - 36 hours 
 
 restore
+
+erase temp_dataset.dta
 	
 end
 
-* Fig 14
+* Fig. A.15: Illustration of the two phases of flexibility events
+// Is a side output of the program 'F5_6_pow_cons_during_event' defined above
 
-// Comes from program 'plot_flex_event_power_profile' (see Fig. 7's program)
+* Fig. A.16: Fleet-level power consumption profiles during flexibility events: heterogeneity across average outdoor temperature
+// Is a side output of the program 'Fig_A16_event_power_profile' defined above
 
-* Fig 15
+* Fig. A.17: Fleet-level net power consumption reduction during flexibility events: heterogeneity across average outdoor temperature
+// Is a side output of the program 'Fig_A17_event_power_reduction' defined above
 
-// Comes from program 'plot_flex_event_power_reduction' (see Fig. 7's program)
+* Fig. A.18: Back-of-the-envelope calculation of yearly savings through a smart allocation of flexibility events
+// Is a side output of the program 'Fig_8_both_panels' defined above
 
-* Data for Table 4
-
-program define App_T4_HS_temp
-
-use data_prepared, clear
-sort hh_id time
-
-local months 10 11 12 1 2 3 4
-
-foreach month of local months {
-    qui sum monthly_avg_hs if monthofyear == `month' & hs_index == 1
-    local mean_hs1 = round(r(mean), 0.1)
-    quietly summarize monthly_avg_hs if monthofyear == `month' & hs_index == 2
-    local mean_hs2 = round(r(mean), 0.1)
-
-    di "Average monthly mean temperature for month `month' is `mean_hs1' (HS1) ; `mean_hs2' (HS2)"
-
-}
-
-capture drop hs_mean
-egen hs_mean = mean(daily_avg_t_out) if hs1_window == 1 | hs2_window == 1, by(hs_index)
-
-end
-
-* Data for Table 5 
-
-program define App_T5_sample_composition
-
-use data_prepared, clear
-sort hh_id time
-
-// Who is decoupled? 
-
-tab hh_id decoupled
-
-// How many interventions for each HH? 
-
-qui levelsof hh_id, local(hh)
-
-local total_unique = 0
-
-foreach label of local hh {
-    qui distinct unique_index if hh_id == `label' & unique_index != 0 & reason_stop != 0 
-    local unique_count = r(ndistinct)
-    di "`label' has " `unique_count' " unique values of unique_index (i.e. interventions)"
-    
-    local total_unique = `total_unique' + `unique_count'
-}
-
-di "Total unique values of unique_index (i.e. interventions) across all HHs: " `total_unique'
-
-// How many in HS1? 
-
-preserve
-
-keep if hs_index == 1
-
-qui levelsof hh_id, local(hh)
-
-local total_unique = 0
-
-qui foreach label of local hh {
-    qui distinct unique_index if hh_id == `label' & unique_index != 0 & reason_stop != 0 
-    local unique_count = r(ndistinct)
-    di "`label' has " `unique_count' " unique values of unique_index (i.e. interventions)"
-    
-    local total_unique = `total_unique' + `unique_count'
-}
-
-di "Total unique values of unique_index (i.e. interventions) across all HHs in HS1: " `total_unique'
-
-restore 
-
-// How many in HS2? 
-
-preserve
-
-keep if hs_index == 2
-
-qui levelsof hh_id, local(hh)
-
-local total_unique = 0
-
-qui foreach label of local hh {
-    qui distinct unique_index if hh_id == `label' & unique_index != 0 & reason_stop != 0 
-    local unique_count = r(ndistinct)
-    di "`label' has " `unique_count' " unique values of unique_index (i.e. interventions)"
-    
-    local total_unique = `total_unique' + `unique_count'
-}
-
-di "Total unique values of unique_index (i.e. interventions) across all HHs in HS2: " `total_unique'
-
-restore 
-
-end
-
-* Fig. 16 
-
-program define App_F16_random_inter
+********************************************************************************
+* Appendix C: Distribution of the interventions per start time,                *
+*             indoor temperature threshold value and day of the week	       *
+********************************************************************************
+capture program drop App_C_Fig_C19
+program define App_C_Fig_C19
 
 use data_prepared, clear
 sort hh_id time
@@ -2628,21 +3065,21 @@ twoway hist hourofday if intervention_dummy == 1 & intervention_dummy[_n-1] == 0
     xtitle("Hour of the day", size(medsmall)) color(blue%35) ///
     graphregion(color(white) margin(zero))  xsize(5) ysize(5) ylabel(0(10)80)
 
-graph export "FigureA16_a.pdf", replace
+graph export "Fig_C19_top_left.pdf", replace
 
 // Day of week
 twoway hist dow if intervention_dummy == 1 & intervention_dummy[_n-1] == 0, frequency discrete xlabel(0 "Mon" 1 "Tue" 2 "Wed" 3 "Thu" 4 "Fri" 5 "Sat" 6 "Sun") ///
     xtitle("Day of the week", size(medsmall)) color(blue%35) ///
     graphregion(color(white) margin(zero))  xsize(5) ysize(5) ylabel(0(10)80)    
 
-graph export "FigureA16_b.pdf", replace
+graph export "Fig_C19_top_right.pdf", replace
 
 // Indoor temperature threshold
 twoway hist t_threshold_0 if intervention_dummy == 1 & intervention_dummy[_n-1] == 0, frequency discrete xtitle("Indoor temperature threshold (°C)", size(medsmall)) /// 
     start(16) color(blue%35) ///
     graphregion(color(white) margin(zero))  xsize(5) ysize(5) ylabel(0(10)80)
 
-graph export "FigureA16_c.pdf", replace
+graph export "Fig_C19_bottom.pdf", replace
 
 // Correlation coefficients 
 pwcorr t_threshold_0 hourofday if intervention_dummy == 1 & intervention_dummy[_n-1] == 0, sig star(0.05) o
@@ -2655,13 +3092,801 @@ pwcorr hourofday notif_0 if intervention_dummy == 1 & intervention_dummy[_n-1] =
 
 end
 
-* Data for Table 6
+********************************************************************************
+* Appendix D: Cross-season comparison of key results    			           *
+********************************************************************************
+capture program drop calculating_results_per_HS
+program define calculating_results_per_HS
+// This program computes all key experimental results within a HS. It redefines the counterfactual to be heating-season-specific as well. (*)
+// (*: done via filtering out all interventions that do not belong to the considered HS /before/ running the data preparation code.)
+    args hs_value 
 
-program define App_T6_reg_rebound_kWh
+    // Data filtering:
+    use experiment_data, clear
+
+    if `hs_value' == 0 {
+        // Keep all data (HS1 and HS2)
+        keep if hs_index == 1 | hs_index == 2
+    }
+    else {
+        // Keep only the selected HS
+        keep if hs_index == `hs_value'
+    }
+	
+	di "***** Heating season `hs_value' (0 = whole sample) *****"
+	
+	qui	code_for_preparation 6 48 20 960 1056 18 // 1056 is a 10% increase over 960 mins (= 16 hours). This extra margin is needed to stabilize the lpoly smoothing at the x-axis boundary. But we don't plot further than 16 hours.  
+	
+	
+	sleep 10000
+
+    // Run the computations:
+
+    // 1. Breakdown of termination scenarios
+    qui count if reason_stop != 0 
+    scalar total_inter_`hs_value' = r(N)
+
+    qui count if reason_stop == -2
+    scalar DHW_stop_`hs_value' = round(100 * r(N) / total_inter_`hs_value', 0.1)
+
+    qui count if reason_stop == -1
+    scalar temp_stop_`hs_value' = round(100 * r(N) / total_inter_`hs_value', 0.1)
+
+    qui count if reason_stop != 0 & reason_stop != -1 & reason_stop != -2
+    scalar manual_stop_`hs_value' = round(100 * r(N) / total_inter_`hs_value', 0.1)
+
+    di "* Stops: DHW = " DHW_stop_`hs_value' "%; indoor temp = " temp_stop_`hs_value' "%; manual stop = " manual_stop_`hs_value' "%; Total interventions = " total_inter_`hs_value'
+
+    // 2. Average intervention duration (in hours)
+    quietly ci means total_duration_int_hour if reason_stop != 0
+
+    scalar mean_duration_`hs_value' = round(r(mean), 0.1)
+    scalar LL_duration_`hs_value' = round(r(lb), 0.1)
+    scalar UL_duration_`hs_value' = round(r(ub), 0.1)
+
+    scalar r_mean_duration_`hs_value' = r(mean)
+    scalar SE_duration_`hs_value' = r(se)
+    scalar n_duration_`hs_value' = r(N)
+
+    di "* Intervention duration: mean = " mean_duration_`hs_value' " h (95% CI: " LL_duration_`hs_value' ", " UL_duration_`hs_value' " h)"
+	
+	// 3. ATT indoor temperature reduction (°C)
+    quietly wildbootstrap reg t_in intervention_dummy i.hh_id, cluster(hh_id) rseed(42) reps(100000)
+    
+    scalar mean_ATT_t_in_`hs_value' = round(e(wboot)[1,1], 0.01)
+    scalar LL_t_in_`hs_value' = round(e(wboot)[1,4], 0.01)
+    scalar UL_t_in_`hs_value' = round(e(wboot)[1,5], 0.01)
+
+    di "* ATT on indoor temperature: mean = " mean_ATT_t_in_`hs_value' " °C (95% CI: " LL_t_in_`hs_value' ", " UL_t_in_`hs_value' " °C)"
+
+    // 4. ATT power reduction (W)
+    quietly wildbootstrap reg hp_p intervention_dummy i.hh_id, cluster(hh_id) rseed(42) reps(100000)
+    
+    scalar mean_ATT_hp_p_`hs_value' = round(e(wboot)[1,1], 1)
+    scalar LL_hp_p_`hs_value' = round(e(wboot)[1,4], 1)
+    scalar UL_hp_p_`hs_value' = round(e(wboot)[1,5], 1)
+
+    di "* ATT on power: mean = " mean_ATT_hp_p_`hs_value' " W (95% CI: " LL_hp_p_`hs_value' ", " UL_hp_p_`hs_value' " W)"
+
+    // 5. Average consumption reduction during intervention (kWh)
+    quietly calculation_for_Fig_3
+    quietly ci means energy_saved_int if reason_stop != 0
+
+    scalar mean_energy_during_`hs_value' = round(r(mean), 0.01)
+    scalar LL_energy_during_`hs_value' = round(r(lb), 0.01)
+    scalar UL_energy_during_`hs_value' = round(r(ub), 0.01)
+
+    scalar r_mean_energy_during_`hs_value' = r(mean)
+    scalar SE_energy_during_`hs_value' = r(se)
+    scalar n_energy_during_`hs_value' = r(N)
+
+    di "* Energy consumption reduction during the intervention: mean = " mean_energy_during_`hs_value' " kWh (95% CI: " LL_energy_during_`hs_value' ", " UL_energy_during_`hs_value' " kWh)"
+	
+    // 6. Average consumption increase after intervention (kWh)
+    quietly calculation_for_Fig_4
+		// Generating a variable to capture the full rebound electricity consumption (kWh), at 16h after the intervention stop
+		capture drop energy_rebound_after_int_16h
+		gen energy_rebound_after_int_16h = energy_rebound_after_int if time_diff_from_end_5min == 960 // 16h in minutes
+
+    quietly ci means energy_rebound_after_int_16h // 16 hours
+
+    scalar mean_energy_after_`hs_value' = round(r(mean), 0.01)
+    scalar LL_energy_after_`hs_value' = round(r(lb), 0.01)
+    scalar UL_energy_after_`hs_value' = round(r(ub), 0.01)
+
+    scalar r_mean_energy_after_`hs_value' = r(mean)
+    scalar SE_energy_after_`hs_value' = r(se)
+    scalar n_energy_after_`hs_value' = r(N)
+
+    di "* Energy consumption increase within 16h post-intervention: mean = " mean_energy_after_`hs_value' " kWh (95% CI: " LL_energy_after_`hs_value' ", " UL_energy_after_`hs_value' " kWh)"
+	
+		// Plot
+		preserve
+		
+		qui preparation_plot_Fig_4_right
+		
+		twoway lpoly energy_rebound_after_int time_diff_from_end_5min if time_diff_from_end_5min <= 960, clcolor(orange) degree(0) ///
+			 || rarea ul_energy_rebound_smooth ll_energy_rebound_smooth time_diff_from_end_5min if time_diff_from_end_5min <= 960, sort ///
+				fcolor(orange%30) lcolor(orange%0) aspectratio(1) ytitle("Average post-intervention" "electricity consumption increase (kWh)") ///
+				ylabel(0(0.5)3.5) xtitle("Time to intervention stop (h)") ///
+				xlabel(0 "0" 120 "2" 240 "4" 360 "6" 480 "8" 600 "10" 720 "12" 840 "14" 960 "16") ///
+				legend(order(1 "Average (across interventions)" 2 "95% CI") cols(2) pos(6) size(small)) ///
+				graphregion(color(white) margin(zero))  xsize(8) ysize(8)  
+	   //graph export "App_D_Fig_like_4_left_`hs_value'.pdf", width(8) height(8) replace
+	   restore
+
+    // 7. Power rebound
+    quietly ci means power_rebound_after_int if time_diff_from_end_5min <= 60
+
+    scalar mean_power_after_`hs_value' = round(r(mean), 1)
+    scalar LL_power_after_`hs_value' = round(r(lb), 1)
+    scalar UL_power_after_`hs_value' = round(r(ub), 1)
+
+    scalar r_mean_power_after_`hs_value' = r(mean)
+    scalar SE_power_after_`hs_value' = r(se)
+    scalar n_power_after_`hs_value' = r(N)
+
+    di "* Power consumption rebound (increase) within 1h post-intervention: mean = " mean_power_after_`hs_value' " W (95% CI: " LL_power_after_`hs_value' ", " UL_power_after_`hs_value' " W)"
+	
+			// Plot
+			preserve
+			
+			qui preparation_plot_Fig_4_left
+
+			twoway lpoly power_rebound_after_int time_diff_from_end_5min if time_diff_from_end_5min <= 960, clcolor(orange) degree(0) ///
+				|| rarea ul_power_rebound_smooth ll_power_rebound_smooth time_diff_from_end_5min if time_diff_from_end_5min <= 960, sort ///
+				   fcolor(orange%30) lcolor(orange%0)  aspectratio(1) ///
+				   xlabel(0 "0" 120 "2" 240 "4" 360 "6" 480 "8" 600 "10" 720 "12" 840 "14" 960 "16") ///
+				   xtitle("Time to intervention stop (h)") ylabel(-100(100)900) ///
+				   ytitle("Average post-intervention" "power consumption increase (W)") yline(0) ///
+				   legend(order(1 "Average (across interventions)" 2 "95% CI") cols(2) pos(6) size(small)) ///
+				   graphregion(color(white) margin(zero))  xsize(8) ysize(8)  
+			//graph export "App_D_Fig_like_4_left_`hs_value'.pdf", replace
+			restore
+	
+	// 8. Fleet-level profile 
+	
+		// Full profile
+		qui calculation_for_Fig_5_left
+		
+		local bw_hp_p = scalar(bw_hp_p_scalar)
+		local bw_cf = scalar(bw_cf_scalar)
+		
+		twoway ///
+			lpoly hp_p five_min_level_elapsed if before == 1, clcolor(blue)  bw(`bw_hp_p') ///
+			|| lpoly hp_p five_min_level_elapsed if after == 1, clcolor(blue)  bw(`bw_hp_p') ///
+			|| rarea UL_sm_before LL_sm_before five_min_level_elapsed if before == 1, sort fcolor(blue%30) lcolor(blue%0) ///
+			|| rarea UL_sm_after LL_sm_after five_min_level_elapsed if after == 1, sort fcolor(blue%30) lcolor(blue%0) ///
+			|| lpoly avg_cf_hp_p_spec_fleet five_min_level_elapsed if (before == 1 | after == 1), clcolor(green) bw(`bw_cf') ///
+			|| rarea UL_cf_sm LL_cf_sm five_min_level_elapsed if (before == 1 | after == 1), sort fcolor(green%30) lcolor(green%0) ///
+			aspectratio(1) xline(0, lwidth(thin) lcolor(gray)) ///
+			xlabel(-360 "-6" 0 "0" 360 "6" 720 "12" 1080 "18" 1440 "24" 1800 "30" 2160 "36" 2520 "42" 2880 "48") ///
+			xtitle("Time to flexibility event start (h)") ylabel(0(100)600) ytitle("Average HP power in the fleet (W)") ///
+			legend(order(1 "Average across interventions" 3 "95% CI" 5 "Control" 6 "95% CI" ) cols(2) pos(6) size(small)) ///
+			graphregion(color(white) margin(zero)) xsize(8) ysize(8) 
+		//graph export "App_D_Fig_like_5_left_`hs_value'.pdf", width(8) height(8) replace
+
+		// Net profile
+		qui calculation_for_Fig_5_right
+		
+		twoway lpoly power_reduction five_min_level_elapsed, clcolor(orange) yline(0) ///
+			|| rarea ul_power_reduction_sm ll_power_reduction_sm five_min_level_elapsed, sort color(orange%30) lcolor(orange%0) ///
+		    xlabel(0 "0" 360 "6" 720 "12" 1080 "18" 1440 "24" 1800 "30" 2160 "36" 2520 "42" 2880 "48") ylabel(-200(50)300) ///
+			xtitle("Time to flexibility event start (h)") ytitle("Average HP power reduction in the fleet (W)") ///
+			legend(order(1 "Average across interventions" 2 "95% CI" ) cols(2) pos(6) size(small)) ///
+			graphregion(color(white) margin(zero)) xsize(8) ysize(8)
+		graph export "App_D_Fig_like_5_right_`hs_value'.pdf", replace
+
+	qui ci means power_reduction if five_min_level_elapsed <= 60 // 1 hours
+			
+	scalar mean_fleet_pow_red_`hs_value' = round(r(mean), 1)
+	scalar LL_fleet_pow_red_`hs_value' = round(r(lb), 1)
+	scalar UL_fleet_pow_red_`hs_value' = round(r(ub), 1)
+	
+    scalar r_mean_fleet_pow_red_`hs_value' = r(mean)
+    scalar SE_fleet_pow_red_`hs_value' = r(se)
+    scalar n_fleet_pow_red_`hs_value' = r(N)
+
+	di "* Fleet-level power reduction within 1h after event start per HP in a fleet: mean = " scalar(mean_fleet_pow_red_`hs_value') " W (95% CI: " scalar(LL_fleet_pow_red_`hs_value') ", " scalar(UL_fleet_pow_red_`hs_value') " W)"
+	
+    // 9. Temperature drop comparison HS1/HS2 and manual/automatic stops
+    use data_prepared, clear
+    sort hh_id time
+		
+		// 1. Comparison HS1/HS2
+		
+		    quietly {		
+			capture drop manually_overruled_during_int
+			gen manually_overruled_during_int = 0 if reason_stop != 0 & reason_stop != -3
+			replace manually_overruled_during_int = 1 if reason_stop == -3
+
+			capture drop temperature_drop
+			gen temperature_drop = t_in_0 - t_in
+
+			ci means temperature_drop if reason_stop != 0 
+
+			scalar mean_temp_drop_`hs_value' = round(r(mean), 0.01)
+			scalar LL_temp_drop_`hs_value' = round(r(lb), 0.01)
+			scalar UL_temp_drop_`hs_value' = round(r(ub), 0.01)
+
+			scalar r_mean_temp_drop_`hs_value' = r(mean)
+			scalar SE_temp_drop_`hs_value' = r(se)
+			scalar n_temp_drop_`hs_value' = r(N)
+			}
+			
+			di "* Temperature drop between start and end of intervention: mean = " mean_temp_drop_`hs_value' " °C (95% CI: " LL_temp_drop_`hs_value' ", " UL_temp_drop_`hs_value' " °C)"
+
+		// 2. Comparison manual vs automatic stops HS1/HS2
+		
+			quietly{
+			ttest temperature_drop if reason_stop != 0 , by(manually_overruled_during_int) unequal
+
+			scalar mean_diff_temp_drop_`hs_value' = round(r(mu_1)-r(mu_2), 0.01)
+			scalar LL_diff_temp_drop_`hs_value' = round(r(mu_1)-r(mu_2) - invttail(r(df_t), 0.05/2)*r(se), 0.01)
+			scalar UL_diff_temp_drop_`hs_value' = round(r(mu_1)-r(mu_2) + invttail(r(df_t), 0.05/2)*r(se), 0.01)
+			}
+			
+			di "* Excess drop when interventions are manually overruled (°C): mean = " mean_diff_temp_drop_`hs_value' " °C (95% CI: " LL_diff_temp_drop_`hs_value' ", " UL_diff_temp_drop_`hs_value' " °C)"
+		  
+end
+
+capture program drop App_D_Table_D6
+program define App_D_Table_D6
+
+    // Run the program 'calculating_results_per_HS' for each dataset
+    calculating_results_per_HS 1 // Heating season 1 only
+    calculating_results_per_HS 2 // Heating season 2 only
+	calculating_results_per_HS 0 // Whole sample
+	
+	capture drop cons 
+	gen cons = 1 
+
+    di "***** Comparison HS1 and HS2 *****"
+	
+	// 1. Breakdown of the termination scenarios
+	
+		// N/A
+
+    // 2. Average intervention duration (in hours)
+		scalar t_stat_duration = (scalar(r_mean_duration_1) - scalar(r_mean_duration_2)) / sqrt(scalar(SE_duration_1)^2 + scalar(SE_duration_2)^2)
+		scalar dof_duration = (scalar(SE_duration_1)^2 + scalar(SE_duration_2)^2)^2 / ( (scalar(SE_duration_1)^4 / (scalar(n_duration_1) - 1)) + (scalar(SE_duration_2)^4 / (scalar(n_duration_2) - 1)) )
+		scalar p_value_duration = round(2 * ttail(dof_duration, abs(t_stat_duration)), 0.01)
+		
+		if p_value_duration < 0.05 {
+			local significance_duration "Statistically significant at the 5% level"
+		}
+		else {
+			local significance_duration "Not statistically significant at the 5% level"
+		}
+		di "Intervention duration: t-stat = " scalar(t_stat_duration) ", df = " scalar(dof_duration) ", p-value = " scalar(p_value_duration) " → Conclusion: `significance_duration'"
+
+	// 3. ATT indoor temperature reduction (°C)
+		qui wildbootstrap reg t_in intervention_dummy##hs_index cons, hascons cluster(hh_id) rseed(42) reps(100000) // No FE -> constant term included
+		
+		scalar diff_ATT_t_in = round(e(wboot)[3,1], 0.01)
+		scalar p_value_ATT_t_in = round(e(wboot)[3,3], 0.01)
+
+		if scalar(p_value_ATT_t_in) < 0.05 {
+			scalar significance_ATT_t_in = "Statistically significant at the 5% level"
+		}
+		else {
+			scalar significance_ATT_t_in = "Not statistically significant at the 5% level"
+		}
+
+		di "Difference in ATTs on T_in: mean = " scalar(diff_ATT_t_in) ", p-value = " scalar(p_value_ATT_t_in) " → Conclusion: " significance_ATT_t_in
+
+    // 4. ATT power reduction (W)
+		qui wildbootstrap reg hp_p intervention_dummy##hs_index cons, hascons cluster(hh_id) rseed(42) reps(100000) // No FE -> constant term included
+
+		matrix wboot_matrix = e(wboot)
+		scalar diff_ATT_hp_p = round(wboot_matrix[3,1], 0.01)
+		scalar p_value_ATT_hp_p = round(wboot_matrix[3,3], 0.01)
+
+		if scalar(p_value_ATT_hp_p) < 0.05 {
+			local significance_ATT_hp_p "Statistically significant at the 5% level"
+		}
+		else {
+			local significance_ATT_hp_p "Not statistically significant at the 5% level"
+		}
+
+		di "Difference in ATTs on HP_P: mean = " scalar(diff_ATT_hp_p) ", p-value = " scalar(p_value_ATT_hp_p) " → Conclusion: `significance_ATT_hp_p'"
+
+    // 5. Average consumption reduction during the intervention (kWh)
+		scalar t_stat_energy_during = (scalar(r_mean_energy_during_1) - scalar(r_mean_energy_during_2)) / sqrt(scalar(SE_energy_during_1)^2 + scalar(SE_energy_during_2)^2)
+		scalar dof_energy_during = (scalar(SE_energy_during_1)^2 + scalar(SE_energy_during_2)^2)^2 / ( (scalar(SE_energy_during_1)^4 / (scalar(n_energy_during_1) - 1)) + (scalar(SE_energy_during_2)^4 / (scalar(n_energy_during_2) - 1)) )
+		scalar p_value_energy_during = round(2 * ttail(scalar(dof_energy_during), abs(scalar(t_stat_energy_during))), 0.01)
+
+		if scalar(p_value_energy_during) < 0.05 {
+			local significance_energy_during "Statistically significant at the 5% level"
+		}
+		else {
+			local significance_energy_during "Not statistically significant at the 5% level"
+		}
+
+		di "Energy consumption reduction during an intervention: t-stat = " scalar(t_stat_energy_during) ", df = " scalar(dof_energy_during) ", p-value = " scalar(p_value_energy_during) " → Conclusion: `significance_energy_during'"
+
+    // 6. Average consumption increase after intervention (kWh)
+		scalar t_stat_energy_after = (scalar(r_mean_energy_after_1) - scalar(r_mean_energy_after_2)) / sqrt(scalar(SE_energy_after_1)^2 + scalar(SE_energy_after_2)^2)
+		scalar dof_energy_after = (scalar(SE_energy_after_1)^2 + scalar(SE_energy_after_2)^2)^2 / ( (scalar(SE_energy_after_1)^4 / (scalar(n_energy_after_1) - 1)) + (scalar(SE_energy_after_2)^4 / (scalar(n_energy_after_2) - 1)) )
+		scalar p_value_energy_after = round(2 * ttail(scalar(dof_energy_after), abs(scalar(t_stat_energy_after))), 0.01)
+
+		if scalar(p_value_energy_after) < 0.05 {
+			local significance_energy_after "Statistically significant at the 5% level"
+		}
+		else {
+			local significance_energy_after "Not statistically significant at the 5% level"
+		}
+
+		di "Energy consumption increase within 16h post-intervention: t-stat = " scalar(t_stat_energy_after) ", df = " scalar(dof_energy_after) ", p-value = " scalar(p_value_energy_after) " → Conclusion: `significance_energy_after'"
+
+    // 7. Power rebound
+		scalar t_stat_power_after = (scalar(r_mean_power_after_1) - scalar(r_mean_power_after_2)) / sqrt(scalar(SE_power_after_1)^2 + scalar(SE_power_after_2)^2)
+		scalar dof_power_after = (scalar(SE_power_after_1)^2 + scalar(SE_power_after_2)^2)^2 / ( (scalar(SE_power_after_1)^4 / (scalar(n_power_after_1) - 1)) + (scalar(SE_power_after_2)^4 / (scalar(n_power_after_2) - 1)) )
+		scalar p_value_power_after = round(2 * ttail(scalar(dof_power_after), abs(scalar(t_stat_power_after))), 0.01)
+
+		if scalar(p_value_power_after) < 0.05 {
+			scalar significance_power_after = "Statistically significant at the 5% level"
+		}
+		else {
+			scalar significance_power_after = "Not statistically significant at the 5% level"
+		}
+
+		di "Power consumption rebound (increase) within 1h post-intervention: t-stat = " scalar(t_stat_power_after) ", df = " scalar(dof_power_after) ", p-value = " scalar(p_value_power_after) " → Conclusion: " significance_power_after
+
+    // 8. Fleet-level profile
+	
+		// 1. Fleet-level maximum reduction within 1 hour
+			scalar t_stat_fleet_pow_red = (scalar(r_mean_fleet_pow_red_1) - scalar(r_mean_fleet_pow_red_2)) / sqrt(scalar(SE_fleet_pow_red_1)^2 + scalar(SE_fleet_pow_red_2)^2)
+			scalar dof_fleet_pow_red = (scalar(SE_fleet_pow_red_1)^2 + scalar(SE_fleet_pow_red_2)^2)^2 / ( (scalar(SE_fleet_pow_red_1)^4 / (scalar(n_fleet_pow_red_1) - 1)) + (scalar(SE_fleet_pow_red_2)^4 / (scalar(n_fleet_pow_red_2) - 1)) )
+			scalar p_value_fleet_pow_red = round(2 * ttail(scalar(dof_fleet_pow_red), abs(scalar(t_stat_fleet_pow_red))), 0.01)
+
+			if scalar(p_value_fleet_pow_red) < 0.05 {
+				local significance_fleet_pow_red "Statistically significant at the 5% level"
+			}
+			else {
+				local significance_fleet_pow_red "Not statistically significant at the 5% level"
+			}
+
+			di "Fleet-level power reduction within 1h after event start per HP in a fleet: t-stat = " scalar(t_stat_fleet_pow_red) ", df = " scalar(dof_fleet_pow_red) ", p-value = " scalar(p_value_fleet_pow_red) " → Conclusion: `significance_fleet_pow_red'"
+			
+		// 2. Mean time until fleet-level rebound (hours)
+	
+			di "Mean time until fleet-level rebound (hours): Visually derived from Figures: App_D_Fig_like_5_right_1.pdf (approx. 17 h) and App_D_Fig_like_5_right_2.pdf (approx. 21 h)"
+
+    // 9. Temperature drop comparison HS1/HS2 and manual/automatic stops
+	
+		// 1. Comparison HS1/HS2
+			scalar t_stat_temp_drop = (scalar(r_mean_temp_drop_1) - scalar(r_mean_temp_drop_2)) / sqrt(scalar(SE_temp_drop_1)^2 + scalar(SE_temp_drop_2)^2)
+			scalar dof_temp_drop = (scalar(SE_temp_drop_1)^2 + scalar(SE_temp_drop_2)^2)^2 / ( (scalar(SE_temp_drop_1)^4 / (scalar(n_temp_drop_1) - 1)) + (scalar(SE_temp_drop_2)^4 / (scalar(n_temp_drop_2) - 1)) )
+			scalar p_value_temp_drop = round(2 * ttail(scalar(dof_temp_drop), abs(scalar(t_stat_temp_drop))), 0.01)
+
+			if scalar(p_value_temp_drop) < 0.05 {
+				local significance_temp_drop "Statistically significant at the 5% level"
+			}
+			else {
+				local significance_temp_drop "Not statistically significant at the 5% level"
+			}
+
+			di "Temperature drop between start and end of intervention: t-stat = " scalar(t_stat_temp_drop) ", df = " scalar(dof_temp_drop) ", p-value = " scalar(p_value_temp_drop) " → Conclusion: `significance_temp_drop'"
+			
+	// 2. Comparison manual vs automatic stops HS1/HS2
+	
+		qui wildbootstrap reg temperature_drop manually_overruled_during_int##hs_index cons if reason_stop != 0, hascons cluster(hh_id) rseed(42) reps(100000) // No FE -> constant term included
+			
+		scalar additional_effect_hs2 = round(e(wboot)[3,1], 0.01)
+		scalar p_value_add_effect_hs2 = round(e(wboot)[3,3], 0.01)
+
+		if scalar(p_value_add_effect_hs2) < 0.05 {
+			scalar sig_add_effect_temp_drop = "Statistically significant at the 5% level"
+		}
+		else {
+			scalar sig_add_effect_temp_drop = "Not statistically significant at the 5% level"
+		}
+
+		di "Additional effect (of manual vs automatic) on temperature drop in HS2: mean = " scalar(additional_effect_hs2) ", p-value = " scalar(p_value_add_effect_hs2) " → Conclusion: " sig_add_effect_temp_drop		
+		
+// Clear previous postfile utility
+postutil clear
+capture frame drop summary_results_merged
+
+// Create a new frame to store the merged results
+frame create summary_results_merged
+frame change summary_results_merged
+
+// Define a tempfile to store the merged results
+tempfile summary_table_merged
+postfile summary_results_merged str50 variable_name str15 mean_all str20 ci_all str15 mean_hs1 str20 ci_hs1 str15 mean_hs2 str20 ci_hs2 str10 p_value_diff using `summary_table_merged'
+
+// Define variables and directly assign their values from scalars
+local variables "Total_nr_inter DHW_stop_share Manual_stop_share Indoor_temp_share Intervention_duration ATT_temperature_reduction ATT_power_reduction  Elec_consumption_reduction Elec_consumption_rebound Power_consumption_rebound Fleet_power_reduction_1hr Fleet_time_till_rebound Temperature_drop Add_effect_temp_drop_manual_HS2"
+
+foreach var in `variables' {
+
+    // Assign mean and CI values using scalars from TX_both_HS
+
+    if "`var'" == "Total_nr_inter" {
+        local mean_all = scalar(total_inter_0)
+        local ci_all = "-"
+        local mean_hs1 = scalar(total_inter_1)
+        local ci_hs1 = "-"
+        local mean_hs2 = scalar(total_inter_2)
+        local ci_hs2 = "-"
+        local p_value_diff = "-"
+    }
+    if "`var'" == "DHW_stop_share" {
+        local mean_all = scalar(DHW_stop_0)
+        local ci_all = "-"
+        local mean_hs1 = scalar(DHW_stop_1)
+        local ci_hs1 = "-"
+        local mean_hs2 = scalar(DHW_stop_2)
+        local ci_hs2 = "-"
+        local p_value_diff = "-"
+    }
+	
+    if "`var'" == "Manual_stop_share" {
+        local mean_all = scalar(temp_stop_0)
+        local ci_all = "-"
+        local mean_hs1 = scalar(temp_stop_1)
+        local ci_hs1 = "-"
+        local mean_hs2 = scalar(temp_stop_2)
+        local ci_hs2 = "-"
+        local p_value_diff = "-"
+    }
+	
+    if "`var'" == "Indoor_temp_share" {
+        local mean_all = scalar(manual_stop_0)
+        local ci_all = "-"
+        local mean_hs1 = scalar(mean_ATT_t_in_1)
+        local ci_hs1 = "-"
+        local mean_hs2 = scalar(mean_ATT_t_in_2)
+        local ci_hs2 = "-"
+        local p_value_diff = "-"
+    }
+    if "`var'" == "Fleet_time_till_rebound" {
+        local mean_all = "cf Figure *"
+        local ci_all = "-"
+        local mean_hs1 = "cf Figure **"
+        local ci_hs1 = "-"
+        local mean_hs2 = "cf Figure ***"
+        local ci_hs2 = "-"
+        local p_value_diff = "-"
+    }	
+    if "`var'" == "ATT_temperature_reduction" {
+        local mean_all = scalar(mean_ATT_t_in_0)
+        local ci_all = "(" + string(scalar(LL_t_in_0), "%6.2f") + ", " + string(scalar(UL_t_in_0), "%6.2f") + ")"
+        local mean_hs1 = scalar(mean_ATT_t_in_1)
+        local ci_hs1 = "(" + string(scalar(LL_t_in_1), "%6.2f") + ", " + string(scalar(UL_t_in_1), "%6.2f") + ")"
+        local mean_hs2 = scalar(mean_ATT_t_in_2)
+        local ci_hs2 = "(" + string(scalar(LL_t_in_2), "%6.2f") + ", " + string(scalar(UL_t_in_2), "%6.2f") + ")"
+        local p_value_diff = scalar(p_value_ATT_t_in)
+    }
+    else if "`var'" == "ATT_power_reduction" {
+        local mean_all = scalar(mean_ATT_hp_p_0)
+        local ci_all = "(" + string(scalar(LL_hp_p_0), "%6.1f") + ", " + string(scalar(UL_hp_p_0), "%6.1f") + ")"
+        local mean_hs1 = scalar(mean_ATT_hp_p_1)
+        local ci_hs1 = "(" + string(scalar(LL_hp_p_1), "%6.1f") + ", " + string(scalar(UL_hp_p_1), "%6.1f") + ")"
+        local mean_hs2 = scalar(mean_ATT_hp_p_2)
+        local ci_hs2 = "(" + string(scalar(LL_hp_p_2), "%6.1f") + ", " + string(scalar(UL_hp_p_2), "%6.1f") + ")"
+        local p_value_diff = scalar(p_value_ATT_hp_p)
+    }
+    else if "`var'" == "Intervention_duration" {
+        local mean_all = scalar(mean_duration_0)
+        local ci_all = "(" + string(scalar(LL_duration_0), "%6.1f") + ", " + string(scalar(UL_duration_0), "%6.1f") + ")"
+        local mean_hs1 = scalar(mean_duration_1)
+        local ci_hs1 = "(" + string(scalar(LL_duration_1), "%6.1f") + ", " + string(scalar(UL_duration_1), "%6.1f") + ")"
+        local mean_hs2 = scalar(mean_duration_2)
+        local ci_hs2 = "(" + string(scalar(LL_duration_2), "%6.1f") + ", " + string(scalar(UL_duration_2), "%6.1f") + ")"
+        local p_value_diff = scalar(p_value_duration)
+    }
+    else if "`var'" == "Elec_consumption_reduction" {
+        local mean_all = scalar(mean_energy_during_0)
+        local ci_all = "(" + string(scalar(LL_energy_during_0), "%6.2f") + ", " + string(scalar(UL_energy_during_0), "%6.2f") + ")"
+        local mean_hs1 = scalar(mean_energy_during_1)
+        local ci_hs1 = "(" + string(scalar(LL_energy_during_1), "%6.2f") + ", " + string(scalar(UL_energy_during_1), "%6.2f") + ")"
+        local mean_hs2 = scalar(mean_energy_during_2)
+        local ci_hs2 = "(" + string(scalar(LL_energy_during_2), "%6.2f") + ", " + string(scalar(UL_energy_during_2), "%6.2f") + ")"
+        local p_value_diff = scalar(p_value_energy_during)
+    }
+    else if "`var'" == "Elec_consumption_rebound" {
+        local mean_all = scalar(mean_energy_after_0)
+        local ci_all = "(" + string(scalar(LL_energy_after_0), "%6.2f") + ", " + string(scalar(UL_energy_after_0), "%6.2f") + ")"
+        local mean_hs1 = scalar(mean_energy_after_1)
+        local ci_hs1 = "(" + string(scalar(LL_energy_after_1), "%6.2f") + ", " + string(scalar(UL_energy_after_1), "%6.2f") + ")"
+        local mean_hs2 = scalar(mean_energy_after_2)
+        local ci_hs2 = "(" + string(scalar(LL_energy_after_2), "%6.2f") + ", " + string(scalar(UL_energy_after_2), "%6.2f") + ")"
+        local p_value_diff = scalar(p_value_energy_after)
+    }
+    else if "`var'" == "Power_consumption_rebound" {
+        local mean_all = scalar(mean_power_after_0)
+        local ci_all = "(" + string(scalar(LL_power_after_0), "%6.1f") + ", " + string(scalar(UL_power_after_0), "%6.1f") + ")"
+        local mean_hs1 = scalar(mean_power_after_1)
+        local ci_hs1 = "(" + string(scalar(LL_power_after_1), "%6.1f") + ", " + string(scalar(UL_power_after_1), "%6.1f") + ")"
+        local mean_hs2 = scalar(mean_power_after_2)
+        local ci_hs2 = "(" + string(scalar(LL_power_after_2), "%6.1f") + ", " + string(scalar(UL_power_after_2), "%6.1f") + ")"
+        local p_value_diff = scalar(p_value_power_after)
+    }
+    else if "`var'" == "Fleet_power_reduction_1hr" {
+        local mean_all = scalar(mean_fleet_pow_red_0)
+        local ci_all = "(" + string(scalar(LL_fleet_pow_red_0), "%6.1f") + ", " + string(scalar(UL_fleet_pow_red_0), "%6.1f") + ")"
+        local mean_hs1 = scalar(mean_fleet_pow_red_1)
+        local ci_hs1 = "(" + string(scalar(LL_fleet_pow_red_1), "%6.1f") + ", " + string(scalar(UL_fleet_pow_red_1), "%6.1f") + ")"
+        local mean_hs2 = scalar(mean_fleet_pow_red_2)
+        local ci_hs2 = "(" + string(scalar(LL_fleet_pow_red_2), "%6.1f") + ", " + string(scalar(UL_fleet_pow_red_2), "%6.1f") + ")"
+        local p_value_diff = scalar(p_value_fleet_pow_red)
+    }
+    else if "`var'" == "Temperature_drop" {
+        local mean_all = scalar(mean_temp_drop_0)
+        local ci_all = "(" + string(scalar(LL_temp_drop_0), "%6.1f") + ", " + string(scalar(UL_temp_drop_0), "%6.1f") + ")"
+        local mean_hs1 = scalar(mean_temp_drop_1)
+        local ci_hs1 = "(" + string(scalar(LL_temp_drop_1), "%6.1f") + ", " + string(scalar(UL_temp_drop_1), "%6.1f") + ")"
+        local mean_hs2 = scalar(mean_temp_drop_2)
+        local ci_hs2 = "(" + string(scalar(LL_temp_drop_2), "%6.1f") + ", " + string(scalar(UL_temp_drop_2), "%6.1f") + ")"
+        local p_value_diff = scalar(p_value_temp_drop)
+    }
+    else if "`var'" == "Add_effect_temp_drop_manual_HS2" {
+        local mean_all = scalar(mean_diff_temp_drop_0)
+        local ci_all = "(" + string(scalar(LL_diff_temp_drop_0), "%6.1f") + ", " + string(scalar(UL_diff_temp_drop_0), "%6.1f") + ")"
+        local mean_hs1 = scalar(mean_diff_temp_drop_1)
+        local ci_hs1 = "(" + string(scalar(LL_diff_temp_drop_1), "%6.1f") + ", " + string(scalar(UL_diff_temp_drop_1), "%6.1f") + ")"
+        local mean_hs2 = scalar(mean_diff_temp_drop_2)
+        local ci_hs2 = "(" + string(scalar(LL_diff_temp_drop_2), "%6.1f") + ", " + string(scalar(UL_diff_temp_drop_2), "%6.1f") + ")"
+        local p_value_diff = scalar(p_value_add_effect_hs2)
+    }	
+    // Store merged results
+    post summary_results_merged ("`var'") ("`mean_all'") ("`ci_all'") ("`mean_hs1'") ("`ci_hs1'") ("`mean_hs2'") ("`ci_hs2'") ("`p_value_diff'")
+}
+
+// Close postfile
+postclose summary_results_merged
+
+di "Figure *: App_D_Fig_like_5_right_0.pdf ; Figure **: App_D_Fig_like_5_right_1.pdf ; Figure ***: App_D_Fig_like_5_right_2.pdf"
+
+// Load and display the final merged summary table
+use `summary_table_merged', clear
+list, separator(0)
+
+// Export merged results to CSV
+// export delimited "robustness_check_summary_merged.csv", replace
+
+// Restore main frame
+frame change default
+
+end
+
+********************************************************************************
+* Appendix F: Counterfactual power consumption accuracy and bias diagnosis     *
+********************************************************************************
+capture program drop App_F_Fig_F20
+program define App_F_Fig_F20, rclass
+
+    frame change default 
+    
+    use data_prepared, clear
+    
+    drop if intervention_dummy == 1
+    drop if excl_from_cf == 1 & intervention_dummy == 0
+	
+	sum hp_p, meanonly
+	local mean_hp_p = r(mean)
+	di "Mean of hp_p excluding interventions and observations too close to the start/end of an intervention (training dataset) = " `mean_hp_p' " W"
+	
+    gen minutes_of_day = hourofday * 60 + minofhour
+
+    capture frame drop rmse_results
+    frame create rmse_results bin rmse_best rmse_global rmse_hh rmse_hh_time
+	
+	
+    local bin_sizes 5 10 15 20 30 45 60 75 90 120 150 180 210 240 270 300 330 360 390 420 450 480 510 540 570 600 630 660 720
+
+	quietly foreach bin in `bin_sizes' {
+        preserve
+
+        * Create time bin
+        gen minutes_bin = floor(minutes_of_day / `bin') * `bin'
+
+        * Collapse to time bin level
+        collapse (mean) hp_p avg_cf_hp_p_spec t_in t_set t_dhw t_out temp_cf_bin daily_avg_t_out daily_min_t_out, ///
+            by(hh_id minutes_bin date)
+
+        * Model 1: Super naive — global mean
+        su hp_p, meanonly
+        gen hp_p_naive_global = r(mean)
+        gen pred_error_global = hp_p - hp_p_naive_global
+        gen diffsq_global = pred_error_global^2
+        egen sumdiffsq_global = total(diffsq_global)
+        count if !missing(diffsq_global)
+        local n_global = r(N)
+        local rmse_global = sqrt(sumdiffsq_global / `n_global')
+
+        * Model 2: hh_id-specific mean
+        egen hp_p_naive_hh = mean(hp_p), by(hh_id)
+        gen pred_error_hh = hp_p - hp_p_naive_hh
+        gen diffsq_hh = pred_error_hh^2
+        egen sumdiffsq_hh = total(diffsq_hh)
+        count if !missing(diffsq_hh)
+        local n_hh = r(N)
+        local rmse_hh = sqrt(sumdiffsq_hh / `n_hh')
+
+        * Model 3: hh_id × minutes_bin mean
+        egen hp_p_naive_hh_time = mean(hp_p), by(hh_id minutes_bin)
+        gen pred_error_hh_time = hp_p - hp_p_naive_hh_time
+        gen diffsq_hh_time = pred_error_hh_time^2
+        egen sumdiffsq_hh_time = total(diffsq_hh_time)
+        count if !missing(diffsq_hh_time)
+        local n_hh_time = r(N)
+        local rmse_hh_time = sqrt(sumdiffsq_hh_time / `n_hh_time')
+
+        * Model 4: paper model — avg_cf_hp_p_spec
+        gen pred_error_best = hp_p - avg_cf_hp_p_spec
+        gen diffsq_best = pred_error_best^2
+        egen sumdiffsq_best = total(diffsq_best)
+        count if !missing(diffsq_best)
+        local n_best = r(N)
+        local rmse_best = sqrt(sumdiffsq_best / `n_best')
+
+
+        * Post to results frame
+        frame post rmse_results (`bin') (`rmse_best') (`rmse_global') (`rmse_hh') (`rmse_hh_time')
+
+        restore
+    }
+	
+	frame rmse_results {
+	
+	capture drop yline_*
+	
+	gen yline_mean_hp_p = `mean_hp_p' 
+	
+	capture drop gain_*
+
+    * Compute efficiency gains as percentage RMSE reduction
+    gen gain_vs_global  = 100 * (rmse_global - rmse_best) / rmse_global
+    gen gain_vs_hh      = 100 * (rmse_hh     - rmse_best) / rmse_hh
+    gen gain_vs_hh_time = 100 * (rmse_hh_time - rmse_best) / rmse_hh_time
+
+    * Display efficiency gain at bin == 360 (6-hour bin)
+    summarize gain_vs_global if bin == 360, meanonly
+    display "Efficiency gain of selected over global avg at bin 6h: " r(mean) "%"
+
+    summarize gain_vs_hh if bin == 360, meanonly
+    display "Efficiency gain of selected over hh_id avg at bin 6h: " r(mean) "%"
+
+    summarize gain_vs_hh_time if bin == 360, meanonly
+    display "Efficiency gain of selected over hh_id × time avg at bin 6h: " r(mean) "%"
+	}
+
+    // Plot
+    frame rmse_results {
+        twoway ///
+            (line rmse_global bin, lcolor(blue%75) lpattern(shortdash)) ///
+            (line rmse_hh bin, lcolor(blue%75) lpattern(dash_dot)) ///
+            (line rmse_hh_time bin, lcolor(blue%75) lpattern(_)) ///
+            (line rmse_best bin, lcolor(blue) lpattern(solid)) ///
+            (line gain_vs_global bin, lcolor(orange) lpattern(solid) lwidth(thin) yaxis(2)), ///
+            xlabel(0 "0" 60 "1" 120 "2" 180 "3" 240 "4" 300 "5" 360 "6" 420 "7" 480 "8" 540 "9" 600 "10" 660 "11" 720 "12") ///
+            ylabel(, grid) ylabel(0(5)30, axis(2)) ///
+            xtitle("Time bin size (hours)")  ///
+            ytitle("RMSE (W)" " " " ") ytitle("Relative improvement (%)", axis(2)) ///
+            legend(order(1 "Model 1" ///
+                         2 "Model 2" ///
+                         3 "Model 3" 4 "Selected" /// 
+						 5 "Improvement: selected vs. Model 1") ///
+                   pos(6) col(1) size(medsmall)) ///
+            xsize(11) ysize(12)
+
+        graph export "Fig_F20.pdf", replace     
+	
+	qui sum rmse_best if bin == 720
+	local rmse_best_value_12h = r(mean)
+	
+	di "At 12h, Model 4's RMSE is: " 100*(1 - (`rmse_best_value_12h'/`mean_hp_p')) " % below the mean"
+	
+	}	
+	
+end
+
+capture program drop App_F_Table_F8
+program define App_F_Table_F8
+
+use data_prepared, clear
+    
+drop if intervention_dummy == 1
+drop if excl_from_cf == 1 & intervention_dummy == 0
+
+// No time binning
+					
+	gen pred_error = hp_p - avg_cf_hp_p_spec
+
+	// Wildboostrap regressions to get corrected p-values
+				
+		wildbootstrap reg pred_error t_in t_dhw t_out daily_min_t_out i.hs_index i.dow i.hourofday i.hh_id, cluster(hh_id) rseed(42) reps(100000)
+		estimates store Model_1_5min
+
+// Time binning 
+
+	preserve
+
+	local time_binning_hour = 4
+	
+	capture drop hour_bin
+		
+	gen hour_bin = floor(hourofday / `time_binning_hour') * `time_binning_hour'
+					  
+	collapse (mean) hp_p avg_cf_hp_p_spec t_in t_dhw t_out daily_avg_t_out daily_min_t_out, by(hh_id hour_bin date dow hs_index)
+
+	gen pred_error = hp_p - avg_cf_hp_p_spec
+
+	// Wildboostrap regressions to get corrected p-values
+
+		wildbootstrap reg pred_error t_in t_dhw t_out daily_min_t_out i.hs_index i.dow i.hour_bin i.hh_id, cluster(hh_id) rseed(42) reps(100000)
+		estimates store Model_2_4h
+		
+	restore
+
+// Time binning 
+
+	preserve
+
+	local time_binning_hour = 8
+	
+		capture drop hour_bin
+
+		
+	gen hour_bin = floor(hourofday / `time_binning_hour') * `time_binning_hour'
+					  
+	collapse (mean) hp_p avg_cf_hp_p_spec t_in t_dhw t_out daily_avg_t_out daily_min_t_out, by(hh_id hour_bin date dow hs_index)
+
+	gen pred_error = hp_p - avg_cf_hp_p_spec
+
+		
+	// Wildboostrap regressions to get corrected p-values
+
+		wildbootstrap reg pred_error t_in t_dhw t_out daily_min_t_out i.hs_index i.dow i.hour_bin i.hh_id, cluster(hh_id) rseed(42) reps(100000)
+		estimates store Model_3_8h
+		
+	restore	
+	
+// Time binning 
+
+	preserve
+
+	local time_binning_hour = 12
+		
+	capture drop hour_bin
+		
+	gen hour_bin = floor(hourofday / `time_binning_hour') * `time_binning_hour'
+					  
+	collapse (mean) hp_p avg_cf_hp_p_spec t_in t_dhw t_out daily_avg_t_out daily_min_t_out, by(hh_id hour_bin date dow hs_index)
+
+	gen pred_error = hp_p - avg_cf_hp_p_spec
+
+	// Wildboostrap regressions to get corrected p-values
+
+		wildbootstrap reg pred_error t_in t_dhw t_out daily_min_t_out i.hs_index i.dow i.hour_bin i.hh_id, cluster(hh_id) rseed(42) reps(100000)
+		estimates store Model_4_12h
+		
+	restore
+		
+// Output table
+
+estout Model_1_5min Model_2_4h Model_3_8h  Model_4_12h, ///
+  drop(_cons) cells(b(fmt(%9.3f)))  ///
+  stats(r2_a N, labels("Adj. R-Square" "N"))
+  di "! The p-values reported by estout do not correspond to the bootstrapped p-values but to the original unclustered OLS ones. p-values derived from Wild bootstrap have to be entered manually, from the wildboostrap output tables directly." 
+
+		
+end
+
+********************************************************************************
+* Appendix G: Regression analysis of the rebound energy consumption            *
+*             in the post-intervention period                                  *
+********************************************************************************
+capture program drop App_G_Table_G9
+program define App_G_Table_G9
 
 // First we need the study of the rebound, i.e. we need to run: 
 
-F4_rebound_post_inter
+Fig_4_rebound_post_inter
 
 // Generating the explanatory variables
 
@@ -2797,6 +4022,266 @@ di "Other parametrizations mentioned in the text:"
 	wildbootstrap reg energy_rebound_after_int_16h diff_set_f T_DHW_f avg_t_out_within_16h morning_f evening_f night_f i.hh_id if time_diff_from_end_5min == 960, cluster(hh_id) rseed(42) reps(100000)
 
 	  
+end
+
+********************************************************************************
+* Appendix H: Correlation analysis of intervention habituation over time       *
+********************************************************************************
+capture program drop App_H_sequencing_interventions
+program define App_H_sequencing_interventions
+
+use data_prepared, clear
+sort hh_id time
+
+// Identification of the successive order in which interventions were experienced by households...
+capture drop intervention_consecutive_order*
+
+    // ... throughout the whole experiment
+        sort hh_id time
+
+        // Generate a variable to count interventions in order, initializing it with missing values for now
+        gen intervention_consecutive_order = .
+
+        // Loop through each household
+        levelsof hh_id, local(households)
+
+        foreach hh in `households' {
+            local int_count = 0
+
+            // Loop over all observations for the current household
+            quietly forvalues i = 1/`=_N' {
+                // If the household matches and reason_stop is not 0, update the count
+                if hh_id[`i'] == `hh' & reason_stop[`i'] != 0 {
+                    // Increment the intervention count
+                    local ++int_count
+                    // Replace intervention_consecutive_order for the specific observation using the row number `i'
+                    replace intervention_consecutive_order = `int_count' in `i'
+                }
+            }
+        }
+
+    // ... for HS1 and HS2 separately
+        sort hh_id hs_index time
+
+        // Generate variables to count interventions in order for each heating season
+        gen intervention_consecutive_order_1 = .
+        gen intervention_consecutive_order_2 = .
+
+        // Loop through each household
+        levelsof hh_id, local(households)
+
+        foreach hh in `households' {
+            local int_count_HS1 = 0
+            local int_count_HS2 = 0
+
+            quietly forvalues i = 1/`=_N' {
+                // HS1:
+                if hh_id[`i'] == `hh' & hs_index[`i'] == 1 & reason_stop[`i'] != 0 {
+                    local ++int_count_HS1
+                    replace intervention_consecutive_order_1 = `int_count_HS1' in `i'
+                }
+
+                // HS2:
+                if hh_id[`i'] == `hh' & hs_index[`i'] == 2 & reason_stop[`i'] != 0 {
+                    local ++int_count_HS2
+                    replace intervention_consecutive_order_2 = `int_count_HS2' in `i'
+                }
+            }
+        }
+	
+// Variable for manual overrule
+
+capture drop manual_overrule
+gen manual_overrule = 0 
+replace manual_overrule = 1 if reason_stop != 0 & reason_stop != -1 & reason_stop != -2	
+
+end
+	
+capture program drop App_H_Table_H10
+program define App_H_Table_H10
+
+	App_H_sequencing_interventions
+
+	frame change default
+	capture frame drop corr_results_frame
+
+    postutil clear
+
+    // Work in a new frame for results
+    frame create corr_results_frame
+    frame change corr_results_frame
+
+    // Create an empty results matrix
+tempfile results
+    postfile corr_results str12 hh_id str12 corr_hs1 str12 pval_hs1 str12 nobs_hs1 str12 corr_hs2 str12 pval_hs2 str12 nobs_hs2 str12 corr_pooled str12 pval_pooled str12 nobs_pooled using `results'
+
+    // Return to default frame for calculations
+    frame change default
+
+    levelsof hh_id, local(hhids)
+    foreach id of local hhids {
+        // ===== CHECK PARTICIPATION =====
+        quietly count if hh_id == `id' & !missing(intervention_consecutive_order_1)
+        local has_hs1 = r(N) > 0
+
+        quietly count if hh_id == `id' & !missing(intervention_consecutive_order_2)
+        local has_hs2 = r(N) > 0
+
+        quietly count if hh_id == `id' & !missing(intervention_consecutive_order)
+        local has_pooled = r(N) > 0
+
+        // ===== CHECK OVERRULES =====
+        quietly count if hh_id == `id' & manual_overrule == 1
+        local has_overrule = r(N) > 0
+
+        // ======== HS1 CORRELATION ========
+        if `has_hs1' {
+            if `has_overrule' {
+                quietly pwcorr manual_overrule intervention_consecutive_order_1 if hh_id == `id', sig
+                if r(N) < 2 | missing(r(rho)) {
+                    local corr_hs1 "-"
+					local pval_hs1 "-"
+					local nobs_hs1 "0"
+                }
+                else {
+                    local corr_hs1 = string(r(rho), "%5.2f")
+					local pval_hs1 = string(r(sig)[1,2], "%5.2f")		
+					quietly count if manual_overrule == 1 & hs_index == 1 & hh_id == `id'
+					local nobs_hs1 = string(r(N))
+                }
+            }
+            else {
+                local corr_hs1 "-"
+				local pval_hs1 "-"
+				local nobs_hs1 "0"
+            }
+        }
+        else {
+            local corr_hs1 "X"
+     		local pval_hs1 ""
+     		local nobs_hs1 ""
+        }
+
+        // ======== HS2 CORRELATION ========
+        if `has_hs2' {
+            if `has_overrule' {
+                quietly pwcorr manual_overrule intervention_consecutive_order_2 if hh_id == `id', sig
+                if r(N) < 2 | missing(r(rho)) {
+                    local corr_hs2 "-"
+					local pval_hs2 "-"
+					local nobs_hs2 "0"
+                }
+                else {
+                    local corr_hs2 = string(r(rho), "%5.2f")
+					local pval_hs2 = string(r(sig)[1,2], "%5.2f")
+					quietly count if manual_overrule == 1 & hs_index == 2 & hh_id == `id'
+					local nobs_hs2 = string(r(N))				
+                }
+            }
+            else {
+                local corr_hs2 "-"
+				local pval_hs2 "-"
+				local nobs_hs2 "0"
+            }
+        }
+        else {
+            local corr_hs2 "X"
+     		local pval_hs2 ""
+     		local nobs_hs2 ""
+        }
+
+        // ======== POOLED CORRELATION ========
+        if `has_pooled' {
+            if `has_overrule' {
+                quietly pwcorr manual_overrule intervention_consecutive_order if hh_id == `id', sig
+                if r(N) < 2 | missing(r(rho)) {
+                    local corr_pooled "-"
+					local pval_pooled "-"
+            		local nobs_pooled "0"
+                }
+                else {
+                    local corr_pooled = string(r(rho), "%5.2f")
+					local pval_pooled = string(r(sig)[1,2], "%5.2f")
+					quietly count if manual_overrule == 1 & hh_id == `id'
+					local nobs_pooled = string(r(N))				
+                }
+            }
+            else {
+                local corr_pooled "-"
+				local pval_pooled = "-"
+         		local nobs_pooled "0"
+            }
+        }
+        else {
+            local corr_pooled "X"
+     		local pval_pooled ""
+     		local nobs_pooled ""
+        }
+
+        // Store results
+        frame change corr_results_frame
+        post corr_results ("`id'") ("`corr_hs1'") ("`pval_hs1'") ("`nobs_hs1'") ("`corr_hs2'") ("`pval_hs2'") ("`nobs_hs2'") ("`corr_pooled'") ("`pval_pooled'") ("`nobs_pooled'")
+        frame change default
+    }
+
+	// ======== ADD OVERALL SAMPLE CORRELATIONS ========
+	frame change default 
+	
+    quietly pwcorr manual_overrule intervention_consecutive_order_1, sig
+    local overall_corr_hs1 = string(r(rho), "%5.2f")
+    local overall_pval_hs1 = string(r(sig)[1,2], "%5.2f")
+	quietly count if manual_overrule == 1 & hs_index == 1
+	local overall_nobs_hs1 = string(r(N))
+	
+    quietly pwcorr manual_overrule intervention_consecutive_order_2, sig
+    local overall_corr_hs2 = string(r(rho), "%5.2f")
+    local overall_pval_hs2 = string(r(sig)[1,2], "%5.2f")
+	quietly count if manual_overrule == 1 & hs_index == 2
+	local overall_nobs_hs2 = string(r(N))
+					
+    quietly pwcorr manual_overrule intervention_consecutive_order, sig
+    local overall_corr_pooled = string(r(rho), "%5.2f")
+    local overall_pval_pooled = string(r(sig)[1,2], "%5.2f")
+	quietly count if manual_overrule == 1 
+	local overall_nobs_pooled = string(r(N))			
+
+    frame change corr_results_frame
+    post corr_results ("All sample") ("`overall_corr_hs1'") ("`overall_pval_hs1'") ("`overall_nobs_hs1'") ("`overall_corr_hs2'") ("`overall_pval_hs2'") ("`overall_nobs_hs2'") ("`overall_corr_pooled'") ("`overall_pval_pooled'") ("`overall_nobs_pooled'")
+    frame change default
+	
+    // Close postfile and display results
+    frame change corr_results_frame
+    postclose corr_results
+
+    use `results', clear
+    list, separator(0)
+
+    // Save results to CSV
+    export delimited "App_H_Habituation_analysis.csv", replace
+
+    frame change default
+	
+	// Other checks in the text:
+	
+		// 1. Temperature drop across households that (never) manually overruled:
+		
+			di "Difference in temperature drop across households 1, 2, 8 and the others:"
+			
+			qui gen indicator_test = 0
+			qui replace indicator_test = 1 if hh_id == 1 | hh_id == 2 | hh_id == 8
+
+			capture drop temperature_drop 
+			gen temperature_drop = t_in_0 - t_in
+			
+			ttest temperature_drop if reason_stop != 0 , by(indicator_test) une
+			
+		// 2. Does temperature drop correlation with intervention sequence number: 
+		
+			di "Correlation between temperature and intervention sequence number within a single heating season:"
+			
+			pwcorr temperature_drop intervention_consecutive_order_1, obs sig star(0.05)
+			pwcorr temperature_drop intervention_consecutive_order_2, obs sig star(0.05)
+	
 end
 
 // End of file

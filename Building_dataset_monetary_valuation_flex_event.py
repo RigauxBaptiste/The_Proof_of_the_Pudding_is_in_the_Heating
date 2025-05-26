@@ -1,13 +1,14 @@
-###############################################################################
-#              The Proof of the Pudding is in the Heating:                    #
-#   a Field Experiment on Household Engagement with Heat Pump Flexibility     #
-#                    December 2024 - Updated January 2025                     #
-#            Baptiste Rigaux°, Sam Hamels° and Marten Ovaere°                 #
-#         ° Department of Economics, Ghent University (Belgium)               #
-###############################################################################
+################################################################################
+#               The Proof of the Pudding is in the Heating:                    #
+#    a Field Experiment on Household Engagement with Heat Pump Flexibility     #
+#                                May 2025                    	               #
+#            Baptiste Rigaux°, Sam Hamels° and Marten Ovaere°                  #
+#         ° Department of Economics, Ghent University (Belgium)                #
+#                  Energy Economics, doi: 10.1016/j.eneco.2025.108565          #
+################################################################################
 
 # Python replication code to construct the dataset for the monetary valuation of flexibility events.
-# Necessary for Fig. 8 (both panels).
+# Necessary for Fig. 7 (both panels).
 
 # Preamble
 
