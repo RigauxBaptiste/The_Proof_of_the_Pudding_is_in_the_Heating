@@ -1,5 +1,6 @@
 # Proof_of_the_Pudding_Heating
 Repository for data and code for Rigaux, B., Hamels, S., & Ovaere, M. (2025). The proof of the pudding is in the heating: A field experiment on household engagement with heat pump flexibility. Energy Economics, 108, 108565. https://doi.org/10.1016/j.eneco.2025.108565 
+Rigaux, B., Hamels, S., & Ovaere, M. (2025). *The proof of the pudding is in the heating: A field experiment on household engagement with heat pump flexibility*. *Energy Economics, 108*, 108565. https://doi.org/10.1016/j.eneco.2025.108565
 
 Accepted version available at: https://ideas.repec.org/p/rug/rugwps/24-1101.html 
 
